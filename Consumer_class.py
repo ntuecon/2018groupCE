@@ -5,7 +5,10 @@ class Consumer(object):
         self.income=income
         self.par=par
 
-    def utility(self,):
+    def utility(self,goods,par):
         from math import log
-        uti = self.par[0]*log(self.goods[0])+self.par[1]*log(self.goods[1])
+        import numpy as np
+        """uti = self.par[0]*log(self.goods[0])+self.par[1]*log(self.goods[1])"""
+        """What's below is the linear algebra version of above equation"""
+        uti = self.par.dot(log(self.goods))
         return uti
