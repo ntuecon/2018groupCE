@@ -1,0 +1,7 @@
+>>> import numpy as np
+>>> from scipy.optimize import minimize
+%%%This is how to import the package we need to use.
+
+You can also check the original document in this link.
+Notice escpecially the section of "Constrained minimization of multivariate scalar functions (minimize)"
+https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html
