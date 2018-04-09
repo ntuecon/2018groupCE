@@ -38,5 +38,3 @@ class Consumer:
         res = minimize(self.utility, [10.0,10.0], args=(-1.0,),
                        constraints=cons, method='SLSQP', options={'disp': True})
         return res.x
-
-    def market_demand
