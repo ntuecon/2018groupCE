@@ -158,9 +158,8 @@ constraints = {}
 
 conditions = {}
 
-
-# Market clearing
-
+def equilibrium():
+    pass
 
 # Input
 
@@ -195,9 +194,10 @@ Factors = (Labour, Capital)
 ## Goods
 "Here the user is prompted to specify the goods of the economy. In this \
 simple cas there are exactly three goods in total: Beer, Champagne and \
-tobacco. First, we create empty arrays for the variable Psi for every good, \
-then we use a double for loop to input a value for every good and every \
-factor in the economy. We then proceed with the inputs for the parameter Xi \
+tobacco. First, we create empty variables for the variable Psi for every \
+good, then we use a for loop to input a value for every good and every \
+factor in the economy. We summarise the result into arrays for later use in \
+in the functions. We then proceed with the inputs for the parameter Xi \
 for every good. Then we summarise all inputs and restate the list of goods in \
 our economy. The values obtained from solving the general equilibrium are \
 specified only as blank arrays"
@@ -279,7 +279,11 @@ Population = (Milton, Karl)
 
 # Optimisation
 
-def equilibrium():
-    pass
+equilibrium()
 
 # Output
+
+
+
+
+
