@@ -16,18 +16,18 @@ from scipy.optimize import minimize
 "These variables are global parameters for our simulation of the CES economy \
 that are later filled with input"
 
-Milton = ()
-Karl = ()
+Milton = None
+Karl = None
 Population = (Milton, Karl)
-Beer = ()
-Champagne = ()
-Tobacco = ()
+Beer = None
+Champagne = None
+Tobacco = None
 Goods = (Beer, Champagne, Tobacco)
-Labour = ()
-Capital = ()
+Labour = None
+Capital = None
 Factors = (Labour, Capital)
-gamma = ()
-sigma = ()
+gamma = None
+sigma = None
 
 
 # Classes
@@ -118,9 +118,9 @@ def utility_func(individual):
     b = h.beta # parameter of h
     t = np.array([])
     for f in range(len(Factors)):        
-        t = np.append(t, theta.Factors[f])  
-    return ((sum(a[1:] * X[1:] ^ gamma ) ^ ((1 - sigma) / gamma)) \
-            - (sum(b * (V[1:] ^ (t[1:] + 1)) / (t[1:] + 1))
+        t = np.append(t, Factors[f].theta)  
+    return (sum(a[1:] * X[1:] ^ gamma ) ^ ((1 - sigma) / gamma)) \
+            - (sum(b * (V[1:] ^ (t[1:] + 1)) / (t[1:] + 1)))
 
 
 def production_func(good, ressources):
@@ -144,7 +144,7 @@ def social_welfare_func(individuals):
     has a utilitarian form, i.e. the utility levels of all individuals are \
     summed up with equal weight. We start by creating an np.array that takes \
     the individual utility values and the sum over said array"
-    H = indiviudals
+    H = individuals
     U = np.array([])
     for h in range(len(H)):
         U = np.append(U, utility_func(H[h]))
@@ -185,7 +185,7 @@ print 'Well done! Now, we can continue with the factors in our economy. \
 The production inputs are labour and capital. You need to specify them.'
 t_L = input('Please, specify the the parameter Theta for the factor Labour: \
             theta_L = ')
-t_T = input('Please, specify the parameter Theta for the factor Capital: \
+t_C = input('Please, specify the parameter Theta for the factor Capital: \
             theta_C = ')
 Labour = Factor(t_L, np.array([]))
 Capital = Factor(t_C, np.array([]))
@@ -206,15 +206,23 @@ specified only as blank arrays"
 print 'We continue with the goods. Our economy is rather hedonistic: \
 Our consumers only live on beer, champagne, and tobacco. \
 In the following, you will specify their economic properties.'
-p_B = np.array([])
-p_C = np.array([])
-p_T = np.array([])
-p_list = (p_B, p_C, p_T)
-for i in range(len(p_list)):
-    for j in range(len(Factors)):
-        x = input('Please specify the parameter Psi for the factor %s for the \
-                  good %s: ' % (Factors[j], p_list[i])
-        p_list[i] = np.append(p_list[i], x)
+p_B_L = None
+p_B_C = None
+p_C_L = None
+p_C_C = None
+p_T_L = None
+p_T_C = None
+all_p_names = ['p_B_L', 'p_B_C', 'p_C_L', 'p_C_C', 'p_T_L', 'p_T_C']
+all_p = [p_B_L, p_B_C, p_C_L, p_C_C, p_T_L, p_T_C]
+for i in range(len(all_p)):
+    all_p[i] = float(input ('Please input the values for the variable p with \
+         respect to the particular good and a specific factor: ' + \
+         all_p_names[i] + ' = '))
+p_B = np.array([p_B_L, p_B_C])
+p_C = np.array([p_C_L, p_C_C])
+p_T = np.array([p_T_L, p_T_C])
+
+
 
 x_B = input('Please, specify the the parameter X for the good Beer: \
             x_B = ')
@@ -231,18 +239,18 @@ Goods = (Beer, Champagne, Tobacco)
 
 ## Individuals
 "Say 'Hello' to the two players in our economy: Milton and Carl. The user is \
-promted to input the parameter values for the two individuals. As with the \
-goods, we use a double for loop to iterate over the parameter Alpha for each \
-good. The parameter Beta is also asked for for each individual. The supply \
+promted to input the parameter values for the two individuals. We creat the \
+parameter Alpha for each good and individual and later summarise them in one \
+array. The parameter Beta is also asked for for each individual. The supply \
 and demand attributes, however, are only specified as empty arrays, as they \
 are results of the general equilibrium solution. We finish this section by \
 restatign the population."
 
 while True:
-    greeting = input('Say hello to the two players in our economy, \
+    greeting = raw_input('Say hello to the two players in our economy, \
                              Milton and Carl! ')
     if greeting != 'Hello':
-        print "Don't be rude, say hello!"
+        print "Don't be rude!"
         continue
     else:
         break
@@ -251,16 +259,20 @@ print 'Now you need to specify their preferences. Alpha stands for the weight \
 of the utility each individual enjoys from consuming a certain good, Beta for \
 weight on the loss from having to provide for factors.'
 
-a_M_B = input()
-a_M_C = input()
-a_M_T = input()
-a_K_B = input()
-a_K_C = input()
-a_K_T = input()
-a_M = np.array([])
-a_K = np.array([])
-b_M = input()
-b_K = input()
+a_M_B = input('Enter a value for the Alpha value of Milton for Beer: a_M_B = ')
+a_M_C = input('Enter a value for the Alpha value of Milton for Champagne: \
+              a_M_C = ')
+a_M_T = input('Enter a value for the Alpha value of Milton for Tobacco: \
+              a_M_T = ')
+a_K_B = input('Enter a value for the Alpha value of Karl for Beer: a_K_B = ')
+a_K_C = input('Enter a value for the Alpha value of Karl for Champagne: \
+              a_K_C = ')
+a_K_T = input('Enter a value for the Alpha value of Karl for Tobacco: \
+              a_K_T = ')
+a_M = np.array([a_M_B, a_M_C, a_M_T])
+a_K = np.array([a_K_B, a_K_C, a_K_T])
+b_M = input('Enter a value for the Beta value of Milton : b_M = ')
+b_K = input('Enter a value for the Beta value of Karl : b_K = ')
 Milton = Individual(np.array([]), np.array([]), a_M, b_M)
 Karl = Individual(np.array([]), np.array([]), a_K, b_K)
 Population = (Milton, Karl)
