@@ -7,7 +7,7 @@ Created on Sun Apr 08 14:17:46 2018
 
 # Initialisation
 
-from sympy import *
+# from sympy import * # not used in current code
 import numpy as np
 from scipy.optimize import minimize
 
@@ -18,14 +18,14 @@ that are later filled with input"
 
 Milton = None
 Karl = None
-Population = (Milton, Karl)
+Population = [Milton, Karl]
 Beer = None
 Champagne = None
 Tobacco = None
-Goods = (Beer, Champagne, Tobacco)
+Goods = [Beer, Champagne, Tobacco]
 Labour = None
 Capital = None
-Factors = (Labour, Capital)
+Factors = [Labour, Capital]
 gamma = None
 sigma = None
 
@@ -40,17 +40,17 @@ individual objects of a certain class from each other"
 
 class Individual:
           
-    def __init__(self, supply, demand, alpha, beta):
+    def __init__(self, supply, demand, alpha, beta, endowment):
         "This class specifies the individuals of our population. Every \
         individual has a specific demand for goods and a specific supply of \
         factors that is later specified through the general equilibrium \
         mechanism. The data input needs to specify the utility parameters \
         Alpha and Beta, however"
-        self.supply = supply #supply of each factor, list or np.array
-        self.demand = demand # demand for each good, list or np.array
-        self.alpha = alpha # fixed for each good, list or np.array
+        self.supply = supply #supply of each factor, np.array
+        self.demand = demand # demand for each good, np.array
+        self.alpha = alpha # fixed for each good, np.array
         self.beta = beta # fixed
-        
+        self.endowment = endowment # endowment with factors, np.array
     def consume(self):
         "The consume method returns the utility level of each consumer, given \
         his levels of factors supplied and goods consumed and the utitlity \
@@ -70,7 +70,7 @@ class Individual:
 
 class Good:
        
-    def __init__(self, psi, xi, mu, delta):
+    def __init__(self, psi, xi, mu, delta, quant, raw):
         "This class specifies the properties of goods in our economy. Goods \
         are only differentiable in terms of the parameters they posses when \
         they feature in the models functions, which correspond to the \
@@ -79,7 +79,10 @@ class Good:
         self.xi = xi # fixed
         self.mu = mu # obtained from solving the Lagrangian
         self.delta = delta # obtained from solving the Lagrangian
-       
+        self.quant = quant # obtained from equilibrium
+        self.raw = raw # resources used in the production function, np.array
+                       # later obtained from optimisation
+        
     def produce(self, factor_supply):
         "The produce method returns the quantity that is produced of a \
         specific good using a certain amount factors as production input. The \
@@ -94,12 +97,13 @@ class Good:
 
 class Factor:
         
-    def __init__(self, theta, pi):
+    def __init__(self, theta, pi, quant):
         "The factor class, similiarly as the goods class, specifies every \
         factor in our economy in terms of the factor specififc function \
         parameters"
         self.theta = theta # fixed
         self.pi = pi # obtained from solving Lagrangian
+        self.quant = quant # obtained from equilibrium
 
 
 # Functions
@@ -151,15 +155,19 @@ def social_welfare_func(individuals):
     return sum(U[1:])
 
 
-def lagrangian():
-    pass
+def lagrangian(individuals):
+    "Now we use the base functions of our model to create the Lagrangian \
+    which we can then optimise to compute the general equilibrium of our \
+    economy"
+    H = individuals
+    G = Goods
+    F = Factors
+    return (social_welfare_func(H) +\
+            sum(G[1:].mu * (G[1:].quant - production_func(G[1:], G[1:].raw))) +\
+            sum(G[1:].delta * ((sum(H[1:].demand) - G[1:].quant))) +\
+            sum(F[1:].pi * (sum(H[1:].supply) - sum(G[1:].raw))))
 
-constraints = {}
 
-conditions = {}
-
-def equilibrium():
-    pass
 
 # Input
 
@@ -188,7 +196,7 @@ t_C = input('Please, specify the parameter Theta for the factor Capital: \
             theta_C = ')
 Labour = Factor(t_L, np.array([]))
 Capital = Factor(t_C, np.array([]))
-Factors = (Labour, Capital)
+Factors = [Labour, Capital]
 
 
 ## Goods
@@ -234,7 +242,7 @@ x_T = input('Please, specify the the parameter X for the good Tobacco: \
 Beer = Good(p_B, x_B, np.array([]), np.array([]))
 Champagne = Good(p_C, x_C, np.array([]), np.array([]))
 Tobacco = Good(p_T, x_T, np.array([]), np.array([]))
-Goods = (Beer, Champagne, Tobacco)
+Goods = [Beer, Champagne, Tobacco]
 
 
 ## Individuals
@@ -275,13 +283,12 @@ b_M = input('Enter a value for the Beta value of Milton : b_M = ')
 b_K = input('Enter a value for the Beta value of Karl : b_K = ')
 Milton = Individual(np.array([]), np.array([]), a_M, b_M)
 Karl = Individual(np.array([]), np.array([]), a_K, b_K)
-Population = (Milton, Karl)
+Population = [Milton, Karl]
 
 # Optimisation
 
-equilibrium()
-
-# Output
+equilibrium = minimize(lagrangian, Population, method='nelder-mead', \
+                       options={'xtol': 1e-8, 'disp': True})
 
 
 
