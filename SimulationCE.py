@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Apr 08 14:17:46 2018
 
 @author: David Biasi
 """
@@ -162,7 +161,8 @@ def lagrangian(individuals):
     H = individuals
     G = Goods
     F = Factors
-    return (social_welfare_func(H) +\
+    sign = -1
+    return sign * (social_welfare_func(H) +\
             sum(G[1:].mu * (G[1:].quant - production_func(G[1:], G[1:].raw))) +\
             sum(G[1:].delta * ((sum(H[1:].demand) - G[1:].quant))) +\
             sum(F[1:].pi * (sum(H[1:].supply) - sum(G[1:].raw))))
@@ -194,8 +194,8 @@ t_L = input('Please, specify the the parameter Theta for the factor Labour: \
             theta_L = ')
 t_C = input('Please, specify the parameter Theta for the factor Capital: \
             theta_C = ')
-Labour = Factor(t_L, np.array([]))
-Capital = Factor(t_C, np.array([]))
+Labour = Factor(t_L, np.array([]), np.array([]))
+Capital = Factor(t_C, np.array([]), np.array([]))
 Factors = [Labour, Capital]
 
 
@@ -239,9 +239,10 @@ x_C = input('Please, specify the the parameter X for the good Champagne: \
 x_T = input('Please, specify the the parameter X for the good Tobacco: \
             x_T = ')
 
-Beer = Good(p_B, x_B, np.array([]), np.array([]))
-Champagne = Good(p_C, x_C, np.array([]), np.array([]))
-Tobacco = Good(p_T, x_T, np.array([]), np.array([]))
+Beer = Good(p_B, x_B, np.array([]), np.array([]), np.array([]), np.array([]))
+Champagne = Good(p_C, x_C, np.array([]), np.array([]), np.array([]), \
+                 np.array([]))
+Tobacco = Good(p_T, x_T, np.array([]), np.array([]), np.array([]), np.array([]))
 Goods = [Beer, Champagne, Tobacco]
 
 
@@ -281,16 +282,17 @@ a_M = np.array([a_M_B, a_M_C, a_M_T])
 a_K = np.array([a_K_B, a_K_C, a_K_T])
 b_M = input('Enter a value for the Beta value of Milton : b_M = ')
 b_K = input('Enter a value for the Beta value of Karl : b_K = ')
-Milton = Individual(np.array([]), np.array([]), a_M, b_M)
-Karl = Individual(np.array([]), np.array([]), a_K, b_K)
+Milton = Individual(np.array([]), np.array([]), a_M, b_M, np.array([]))
+Karl = Individual(np.array([]), np.array([]), a_K, b_K, np.array([]))
 Population = [Milton, Karl]
 
+
 # Optimisation
+"Now we create an equilibrium that minismises the negative of the Lagriangan, \
+i.e. maximises the Lagrangian. So we reach the general equilibrium of our \
+economy"
 
 equilibrium = minimize(lagrangian, Population, method='nelder-mead', \
                        options={'xtol': 1e-8, 'disp': True})
 
-
-
-
-
+equilibrium
