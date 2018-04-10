@@ -1,0 +1,31 @@
+ESTART: /Users/chenliangcheng/2018groupCE/Market_demand.py ========
+Please detemine the market prices of [x,y]: [2,1]
+Please detemine the income of individual: 200
+Please detemine the parameters of Cobb-Doglous[alpha1,alpha2]: [0.3,0.7]
+Please determine the number of individuals: 5
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: -4.47950890863
+            Iterations: 18
+            Function evaluations: 72
+            Gradient evaluations: 18
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: -4.47950890863
+            Iterations: 18
+            Function evaluations: 72
+            Gradient evaluations: 18
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: -4.47950890863
+            Iterations: 18
+            Function evaluations: 72
+            Gradient evaluations: 18
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: -4.47950890863
+            Iterations: 18
+            Function evaluations: 72
+            Gradient evaluations: 18
+Optimization terminated successfully.    (Exit mode 0)
+            Current function value: -4.47950890863
+            Iterations: 18
+            Function evaluations: 72
+            Gradient evaluations: 18
+[150.01332571 699.97334858]
