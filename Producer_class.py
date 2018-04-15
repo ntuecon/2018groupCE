@@ -1,5 +1,5 @@
 class Producer:
-    """This class is the optimization of individual choice of consumer"""
+    """This class is the optimization of prodiuction choice of firm"""
     def __init__(self,Goodprices,Facprices,par):
         self.Goodprices=Goodprices
         self.par=par
@@ -11,7 +11,7 @@ class Producer:
         """uti = self.par[0]*log(self.goods[0])+self.par[1]*log(self.goods[1])"""
         """What's below is the linear algebra version of above equation"""
         """uti = self.par.dot(log(self.goods))"""
-        """Objective function of consumer utility"""
+        """Production function"""
         return sign*((Quants[0])**self.par[0]+Quants[1]**self.par[1])
 
     def profit(self,Quants,sign=1.0):
@@ -20,7 +20,7 @@ class Producer:
         """uti = self.par[0]*log(self.goods[0])+self.par[1]*log(self.goods[1])"""
         """What's below is the linear algebra version of above equation"""
         """uti = self.par.dot(log(self.goods))"""
-        """Objective function of consumer utility"""
+        """Objective function of profit maximization"""
         return sign*(self.Goodprices*self.production(Quants)-self.Facprices[0]*Quants[0]-self.Facprices[1]*Quants[1])
 
     def cons(self):
