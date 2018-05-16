@@ -19,11 +19,6 @@ class Social:
         import ProducerCES as Pros
         import numpy as np
         SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))])
-        #Technology Constraint
-        Product=[[]]
-        for i in range(self.ng):
-            Product=Pros.Product(self.Production_Par[i][0:self.nf],self.Production_Par[i][self.nf])
-            SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)]=Product.Tech(SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)+1:self.nt*(self.ng+self.nf)+(i+1)*(1+self.nf)])
         People=[[]]
         utility=[[]]*self.nt
         for i in range(self.nt):
@@ -32,23 +27,49 @@ class Social:
         utility=np.array(utility)
         return sign*self.People_of_Type.dot(utility)
 
-    def MarketClears(self):
+    def Technology(self,SocialPlan):
+        import ProducerCES as Pros
+        import numpy as np
+        Product=[[]]
+        NT=np.zeros((self.nt,self.nt),float)
+        np.fill_diagonal(NT,self.People_of_Type)
+        for i in range(self.ng):
+            Product=Pros.Product(self.Production_Par[i][0:self.nf],self.Production_Par[i][self.nf])
+            SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)]=Product.Tech(SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)+1:self.nt*(self.ng+self.nf)+(i+1)*(1+self.nf)])
+        ProSide=SocialPlan[self.nt*(self.ng+self.nf):]
+        ProSide=np.reshape(ProSide,(self.ng,1+self.nf))
+        TotalProduct=ProSide[:,0]
+        ConSide=SocialPlan[0:self.nt*(self.ng+self.nf)]
+        ConSide=np.reshape(ConSide,(self.nt,self.ng+self.nf))
+        ConSide=np.sum(np.matmul(NT,ConSide),0)
+        TotalConsume=ConSide[0:self.ng]
+        return TotalProduct-TotalConsume
+    
+    def MarketClearance(self,SocialPlan):
+        import numpy as np
+        NT=np.zeros((self.nt,self.nt),float)
+        np.fill_diagonal(NT,self.People_of_Type)
+        ConSide=SocialPlan[0:self.nt*(self.ng+self.nf)]
+        ProSide=SocialPlan[self.nt*(self.ng+self.nf):]
+        ConSide=np.reshape(ConSide,(self.nt,self.ng+self.nf))
+        ConSide=np.sum(np.matmul(NT,ConSide),0)
+        ProSide=np.reshape(ProSide,(self.ng,1+self.nf))
+        ProSide=np.append(ProSide[:,0],np.sum(ProSide[:,1:],0))
+        return ConSide-ProSide
+
+    def Constraint(self):
         import numpy as np
         #cons=({},)*(self.ng+self.nf+1)
         #for i in range(self.ng):
         #    cons[]
         #for i in range(self.ng,self.ng+self.nf+1):
         #
-        NT=np.zeros((self.nt,self.nt),float)
-        np.fill_diagonal(NT,self.People_of_Type)
-        cons=({},)*(3)
-        cons[0]={'type' : 'eq',
-                 'fun' : lambda SocialPlan: np.reshape(SocialPlan[0:self.nt*(self.ng+self.nf)],(self.nt,self.))}
-        cons[1]={'type' : 'eq',
-                 'fun' : lambda SocialPlan: SocialPlan}
-        cons[2]={'type' : 'ineq',
-                 'fun' : lambda SocialPlan: SocialPlan}
-        return cons
+        return ({'type' : 'eq',
+                 'fun' : lambda SocialPlan: self.Technology(SocialPlan)},
+                {'type' : 'eq',
+                 'fun' : lambda SocialPlan: self.MarketClearance(SocialPlan)},
+                {'type' : 'ineq',
+                 'fun' : lambda SocialPlan: SocialPlan})
 
     def Welfare_max(self):
         import numpy as np
@@ -56,12 +77,8 @@ class Social:
         """
         1.The package of minimize can be use as maximize ,if the
         objective function is multiply by -1.
-        2."cons" set as the constrain of optimization problem.
-        3.If we use SLSQP method.
-        The jacobian means the partial derivative of every independent variables. 
+        2."MarketClears" set as the constrain of optimization problem.
         """
-        #GFvec=[[]]*(self.ng+self.nf)
-        """res = minimize(self.utility, np.ones(self.ng+self.nf), args=(-1.0,),"""
-        res = minimize(self.Welfare, [10.0]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
-                       constraints=self.MarketClears(), method='SLSQP', options={'disp': True})
+        res = minimize(self.Welfare, [100.0]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
+                       constraints=self.Constraint(), method='SLSQP', options={'disp': True})
         return res.x
