@@ -17,3 +17,5 @@ class Consumer:
         """Objective function of consumer utility"""
         GFvec=np.array(GFvec[0:self.ng+self.nf])
         return sign*((self.alpha.dot(GFvec[0:self.ng]**self.gamma))**((1-self.rho)/self.gamma)-np.ones(len(self.theta)).dot(self.beta*GFvec[self.ng:(self.ng+self.nf)]**(self.theta+1)/(self.theta+1)))
+
+#hello
