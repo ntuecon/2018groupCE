@@ -34,7 +34,7 @@ class Utility(object):
 
 class CESUtility(Utility):
     '''
-    Defines the utility function u = (sum_i a_i c_i^r )^(a/r)
+    Defines the utility function u = (sum_i a_i*c_i^r )^(a/r)
     Required parameters
     'elasticity' (float)
     'weights' (ndarray of floats)
@@ -134,7 +134,7 @@ class Profit(Utility):
     '''
     A general class for calculating the profit
     '''
-    def __call__(self, c, env):
+    def __call__(self,env,c):
         '''
         This makes the utility function a callable function
         '''

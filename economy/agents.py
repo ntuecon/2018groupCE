@@ -24,7 +24,7 @@ class Agent(object):
         #In case an environment is provided, use this environment
         self.env = env
         #The problemsize needs to be manually rewritten in case it is not equal to 1
-        self.problemsize = 1
+        self.problemsize = len(self.env['goods']+self.env['factors'])
     
     def optimize(self,bounds,constraints):
         #The env tells us how large the dimension of the initial guess has to be
@@ -42,7 +42,7 @@ class Consumer(Agent):
     Setting env is required as there are both goods and factors to be chosen
     Constraints for the consumer need to be supplied by the economy
     '''
-    def __init__(self,objective,uparameters,environment,budget):
+    def __init__(self,objective,uparameters,environment,fact_endowment):
         '''
         Constructor
         '''
@@ -51,12 +51,11 @@ class Consumer(Agent):
         if objective==CESUtility:
             self.objective = lambda c: -objective (uparameters)(c)
         elif objective==GoodFactorUtility:
-            self.objective=lambda c:-objective (uparameters,environment)(c)
+            self.objective=lambda c:-objective (uparameters)(c,self.environment)
         else:
             self.objective=objective
 
-        self.budget=budget
-
+        self.fact_endowment=fact_endowment
 
 class Producer(Agent):
     '''
@@ -64,19 +63,22 @@ class Producer(Agent):
     
     The economy needs to supply prices
     '''
-    def __init__(self, objective, technology, environment,parameters):
+    def __init__(self, objective,technology, tech_parameters, environment,fact_endowment):
         '''
         Constructor
         '''
-        self.parameters=parameters
+        self.tech_parameters=tech_parameters
+        self.fact_endowment=fact_endowment
         self.environment=environment
         if objective==Profit:
-            self.objective=lambda c: Profit(self.parameters)(c,self.environment)
+            self.objective=lambda c: Profit({'scale':1.0,'shift':0})(self.environment,c)
         else:
             self.objective = objective
-        if technology == None:
-            self.technology = DRSTechnology(self.environment)
-        self.constraints = [{'type': 'ineq', 'fun':technology}]
+            
+        if (1-self.tech_parameters['elasticity'])/self.tech_parameters['elasticity']==1:
+            self.technology = LinearTechnology
+        else:
+            self.technology=lambda factors:DRSTechnology(self.tech_parameters)(factors)
         
         #In case an environment is provided, use this environment
         self.problemsize = len(self.environment['goods']) + len(self.environment['factors'])
@@ -110,7 +112,7 @@ class Government(Agent):
         self.problemsize = len(self.env['consumers'])
 
 
-env={'goods':['X1','X2'],'factors':[],'goodprices':[1,2],'factorprices':[1.5]}
+"""env={'goods':['X1','X2'],'factors':[],'goodprices':[1,2],'factorprices':[1.5]}
 prices=np.array([2.0,1.5,-1.5,-2.5])
 iendowment=np.array([2,4,2,1])
 MyConsumer=Consumer(CESUtility,
@@ -121,7 +123,7 @@ MyConsumer=Consumer(CESUtility,
                     env,
                     10)
 
-MyConsumer.optimize(None,{'type':'eq','fun':lambda x:sum(x*[1.0,2.0])-MyConsumer.budget})
+MyConsumer.optimize(None,{'type':'eq','fun':lambda x:sum(x*[1.0,2.0])-MyConsumer.budget})"""
 
 
                                        

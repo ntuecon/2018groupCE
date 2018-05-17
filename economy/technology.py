@@ -5,6 +5,7 @@ Created on Apr 16, 2018
 '''
 import numpy as np
 from functions import FlexibleCrossProduct
+from utility import CESUtility
 
 
 class Technology(object):
@@ -43,15 +44,15 @@ class DRSTechnology(object):
     '''
     This technology has constant decreasing returns to scale
     '''
-    def __init__(self, parameters):
+    def __init__(self, tech_parameters):
         '''
         Constructor
         '''
-        self.parameters = parameters
+        self.tech_parameters = tech_parameters
         
-    def __call__(self,output,factors):
+    def __call__(self,factors):
         '''
         This returns the constraint value. If the value is positive, the constraint is fulfilled.
         '''
         #for the power, a flexible version also needs to be introduced in case we want changing exponents.
-        return output - FlexibleCrossProduct(self.parameters['linear'], np.power(factors, self.parameters['exponent']))
+        return CESUtility(self.tech_parameters)(factors)
