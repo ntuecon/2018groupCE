@@ -1,7 +1,7 @@
 #This is main file
-import ConsumerCES_class as Cons
+import ConsumerCES as Cons
 import ProducerCES as Pros
-import Welfare as Soc
+import WelfareCES as Soc
 import numpy as np
 
 print "Welcome to the ECON world of CE group!"
