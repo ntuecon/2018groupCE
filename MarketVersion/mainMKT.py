@@ -1,10 +1,10 @@
 #This is main file
-import ConsumerCES_class as Cons
-import ProducerCES as Pros
-import Welfare as Soc
+import ConsumerMKT_class as Cons
+import ProducerMKT_class as Pros
+import MarketPlaceMKT as Mark
 import numpy as np
 
-print "Welcome to the ECON world of CE group!"
+print "Welcome to the ECON world of CE group!(MarketVersion)"
 raw_input()
 print "Please follow us to set up all the details."
 raw_input()
@@ -31,12 +31,13 @@ for i in range(number_of_goods):
 Production_Par=1.0*np.array(Production_Par)
 
 'Give all the parameters to the welfare function'
-A=Soc.Social(Agent_Type,People_of_Type,Factor_sup,Production_Par)
+A=Mark.Market(Agent_Type,People_of_Type,Factor_sup,Production_Par)
 #A.Welfare([1,1,1,1])
 #A.Welfare([1,1,1,1,3,1,1,3,1,1])
 #(g1,g2,f1,f2,p1,cf1,cf2,p2,cf1,cf2)
 
-Result=A.Welfare_max()
+Prices=A.Price_Power()
+Result=A.Equilibrium()
 
 for i in range(Type_of_consumers):
     print "The "+str(i+1)+" type of agent consumes goods: "+np.array2string(Result[i*(number_of_goods+number_of_factors):i*(number_of_goods+number_of_factors)+number_of_goods])

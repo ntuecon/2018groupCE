@@ -1,7 +1,7 @@
 class Product:
     def __init__(self,psi,ksi,GoodPriceN,FacPrices):
         import numpy as np
-        self.GoodPriceN=np.array(GoodPriceN)
+        self.GoodPriceN=float(GoodPriceN)
         self.FacPrices=np.array(FacPrices)
         self.ksi=float(ksi)
         self.psi=np.array(psi)
@@ -33,6 +33,6 @@ class Product:
         import numpy as np
         from scipy.optimize import minimize
         res = minimize(self.Profit, [10.0]*(self.nf), args=(-1.0,),
-                       constraints=self.cons(), method='SLSQP', options={'disp': True})
+                       constraints=self.Cons(), method='SLSQP', options={'disp': False})
         GoodN = self.Tech(res.x)
         return np.append(GoodN,res.x)

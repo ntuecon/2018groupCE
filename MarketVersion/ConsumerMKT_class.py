@@ -17,6 +17,7 @@ class Consumer:
         import numpy as np
         """What's below is the linear algebra version of above equation"""
         """Objective function of consumer utility"""
+        """CES utility function can """
         GFvec=np.array(GFvec[0:self.ng+self.nf])
         return sign*((self.alpha.dot(GFvec[0:self.ng]**self.gamma))**((1-self.rho)/self.gamma)-np.ones(len(self.theta)).dot(self.beta*GFvec[self.ng:(self.ng+self.nf)]**(self.theta+1)/(self.theta+1)))
 
@@ -27,7 +28,7 @@ class Consumer:
         """
         import numpy as np
         return ({'type' : 'ineq',
-                 'fun' : lambda goods: np.array(self.FacPrices.dot(GFvec[self.ng:(self.ng+self.nf)])-self.GoodPrices.dot(GFvec[0:self.ng]))},
+                 'fun' : lambda GFvec: np.array(self.FacPrices.dot(GFvec[self.ng:(self.ng+self.nf)])-self.GoodPrices.dot(GFvec[0:self.ng]))},
                 {'type' : 'ineq',
                  'fun' : lambda GFvec: GFvec})
     
@@ -44,5 +45,5 @@ class Consumer:
         #GFvec=[[]]*(self.ng+self.nf)
         """res = minimize(self.utility, np.ones(self.ng+self.nf), args=(-1.0,),"""
         res = minimize(self.utility, [10.0]*(self.ng+self.nf), args=(-1.0,),
-                       constraints=self.cons(), method='SLSQP', options={'disp': True})
+                       constraints=self.cons(), method='SLSQP', options={'disp': False})
         return res.x
