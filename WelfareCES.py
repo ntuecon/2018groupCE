@@ -8,14 +8,11 @@ class Social:
         self.ng=self.Agent_Type.shape[1]-1
         self.nf=self.Factor_sup.shape[0]
         self.Production_Par=Production_Par
-        #super(Social, self).__init__(alpha,beta,theta)
-        #self.gamma=1.0
-        #self.rho=0.0
-        #self.ng=len(self.alpha)
-        #self.nf=len(self.theta)
 
     def Welfare(self,SocialPlan,sign=1.0):
-        import ConsumerCES as Cons
+        '''The social welfare is simply the aggregation of individual utilitys.
+        The individual utility is written in the ConsumerCES_class.py.'''
+        import ConsumerCES_class as Cons
         import ProducerCES as Pros
         import numpy as np
         SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))])
@@ -28,6 +25,9 @@ class Social:
         return sign*self.People_of_Type.dot(utility)
 
     def Technology(self,SocialPlan):
+        '''This function guarantees the goods variables in SocialPlan are
+        consistent with facter variables under technology constraints. The
+        technology is written in the ProducerCES.py'''
         import ProducerCES as Pros
         import numpy as np
         Product=[[]]
@@ -46,6 +46,9 @@ class Social:
         return TotalProduct-TotalConsume
     
     def MarketClearance(self,SocialPlan):
+        '''This function calculate the indivual supply and consumption into
+        the market supply and consumption. The operation logic is to sum all
+        the variables(goods and factors) consumer or producer used.'''
         import numpy as np
         NT=np.zeros((self.nt,self.nt),float)
         np.fill_diagonal(NT,self.People_of_Type)
@@ -59,11 +62,6 @@ class Social:
 
     def Constraint(self):
         import numpy as np
-        #cons=({},)*(self.ng+self.nf+1)
-        #for i in range(self.ng):
-        #    cons[]
-        #for i in range(self.ng,self.ng+self.nf+1):
-        #
         return ({'type' : 'eq',
                  'fun' : lambda SocialPlan: self.Technology(SocialPlan)},
                 {'type' : 'eq',
@@ -77,8 +75,9 @@ class Social:
         """
         1.The package of minimize can be use as maximize ,if the
         objective function is multiply by -1.
-        2."MarketClears" set as the constrain of optimization problem.
+        2.Objective function is Social Welfare function.
+        3."MarketClears" &"Technology" set as the constrain of optimization problem.
         """
-        res = minimize(self.Welfare, [100.0]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
+        res = minimize(self.Welfare, [50.0]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
                        constraints=self.Constraint(), method='SLSQP', options={'disp': True})
         return res.x
