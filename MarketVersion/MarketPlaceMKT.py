@@ -42,16 +42,11 @@ class Market:
         import ProducerMKT_class as Pros
         import numpy as np
         Prices=np.array(Prices[0:self.ng+self.nf])
-        ExcessD=np.array(self.ConsSide(Prices)-self.ProsSide(Prices))**2
+        ExcessD=np.sum((self.ConsSide(Prices)-self.ProsSide(Prices))**2)
         return ExcessD
 
     def Constraint(self):
         import numpy as np
-        #cons=({},)*(self.ng+self.nf+1)
-        #for i in range(self.ng):
-        #    cons[]
-        #for i in range(self.ng,self.ng+self.nf+1):
-        #
         return ({'type' : 'ineq',
                  'fun' : lambda Prices: Prices})
 
@@ -63,13 +58,28 @@ class Market:
         objective function is multiply by -1.
         2."MarketClears" set as the constrain of optimization problem.
         """
-        res = minimize(self.ExcessDemand, [100.0]*(self.ng+self.nf),
+        res = minimize(self.ExcessDemand, [10.0]*(self.ng+self.nf),
                        method='Nelder-Mead', options={'disp': True})
         return res.x
 
     def Equilibrium(self):
         import numpy as np
         import ConsumerMKT_class as Cons
+        import ProducerMKT_class as Pros
         Prices=self.Price_Power()
-        return ConsSide(Prices)
+        Peoples=[[]]
+        ConDe=[[]]*self.nt
+        for i in range(self.nt):
+            People=Cons.Consumer(self.Agent_Type[i][0:self.ng],self.Agent_Type[i][self.ng],self.Factor_sup,Prices[0:self.ng],Prices[self.ng:self.ng+self.nf])
+            ConDe[i]=People.utility_max()
+        ConDe=np.array(ConDe)
+        np.reshape(ConDe,np.size(ConDe))
+        Firms=[[]]
+        ProDe=[[]]*self.ng
+        for i in range(self.ng):
+            Firm=Pros.Product(self.Production_Par[i,:self.nf],self.Production_Par[i,self.nf],Prices[i],Prices[self.ng:self.ng+self.nf])
+            ProDe[i]=Firm.Profit_max()
+        ProDe=np.array(ProDe)
+        np.reshape(ProDe,np.size(ProDe))
+        return np.append(ConDe,ProDe)
         

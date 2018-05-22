@@ -23,6 +23,7 @@ class Product:
         return self.GoodPriceN*self.Tech(FacDemand)-self.Cost(FacDemand)
 
     def Cons(self):
+        '''The constraint of Shutdown Condition'''
         import numpy as np
         return ({'type' : 'ineq',
                  'fun' : lambda FacDemand: np.array(self.GoodPriceN-self.Cost(FacDemand)/self.Tech(FacDemand))},
