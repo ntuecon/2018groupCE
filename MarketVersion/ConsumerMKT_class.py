@@ -5,8 +5,8 @@ class Consumer:
         self.GoodPrices=np.array(GoodPrices)
         self.FacPrices=np.array(FacPrices)
         self.alpha=np.array(alpha)
-        self.gamma=1.0
-        self.rho=0.0
+        self.gamma=0.5 # Gamma must be strictly between 0 and 1
+        self.sigma=0.0 # Sigma must be between 0 and 1
         self.beta=1.0*beta
         self.theta=1.0*np.array(theta)
         self.ng=len(self.alpha)
@@ -19,7 +19,7 @@ class Consumer:
         """Objective function of consumer utility"""
         """CES utility function can """
         GFvec=np.array(GFvec[0:self.ng+self.nf])
-        return sign*((self.alpha.dot(GFvec[0:self.ng]**self.gamma))**((1-self.rho)/self.gamma)-np.ones(len(self.theta)).dot(self.beta*GFvec[self.ng:(self.ng+self.nf)]**(self.theta+1)/(self.theta+1)))
+        return sign*((self.alpha.dot(GFvec[0:self.ng]**self.gamma))**((1-self.sigma)/self.gamma)-np.ones(len(self.theta)).dot(self.beta*GFvec[self.ng:(self.ng+self.nf)]**(self.theta+1)/(self.theta+1)))
 
     def cons(self):
         """
