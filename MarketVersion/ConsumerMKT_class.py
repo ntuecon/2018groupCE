@@ -5,13 +5,8 @@ class Consumer:
         self.GoodPrices=np.array(GoodPrices)
         self.FacPrices=np.array(FacPrices)
         self.alpha=np.array(alpha)
-<<<<<<< Updated upstream
         self.gamma=0.5 # Gamma must be strictly between 0 and 1
         self.sigma=0.0 # Sigma must be between 0 and 1
-=======
-        self.gamma=0.5
-        self.sigma=0.0
->>>>>>> Stashed changes
         self.beta=1.0*beta
         self.theta=1.0*np.array(theta)
         self.ng=len(self.alpha)

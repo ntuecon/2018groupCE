@@ -26,11 +26,8 @@ for i in range(Type_of_consumers):
 Agent_Type=np.array(Agent_Type,dtype=float)
 People_of_Type=np.array(People_of_Type,dtype=float)
 
-<<<<<<< Updated upstream
 Factor_sup = np.array(input("Please set the parameters of factor supply(["+str(number_of_factors)+" for theta]):"),dtype=float)
-=======
-Factor_sup = Factor_sup = np.array(input("Please set the parameters of factor supply(["+str(number_of_factors)+" for theta]):"),dtype=float)
->>>>>>> Stashed changes
+
 while np.all(Factor_sup>np.zeros(number_of_factors))==False:
     print '   Value error. Thetas must be positive. Please try again :'
     Factor_sup = np.array(input("   Please set the parameters of factor supply(["+str(number_of_factors)+" for theta]):"),dtype=float)
