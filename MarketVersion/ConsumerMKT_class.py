@@ -9,8 +9,8 @@ class Consumer:
         self.sigma=0.0 # Sigma must be between 0 and 1
         self.beta=1.0*beta
         self.theta=1.0*np.array(theta)
-        self.ng=len(self.alpha)
-        self.nf=len(self.theta)
+        self.ng=len(self.alpha) # number of goods
+        self.nf=len(self.theta)# number of factors
 
     def utility(self,GFvec,sign=1.0):
         from math import log

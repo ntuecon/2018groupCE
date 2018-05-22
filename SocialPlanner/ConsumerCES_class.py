@@ -2,7 +2,7 @@ class Consumer:
     def __init__(self,alpha,beta,theta):
         import numpy as np
         self.alpha=np.array(alpha)
-        self.gamma=1.0
+        self.gamma=0.5
         self.rho=0.0
         self.beta=1.0*beta
         self.theta=1.0*np.array(theta)
