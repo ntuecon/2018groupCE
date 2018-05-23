@@ -1,15 +1,17 @@
 #This is main file
-import ConsumerMKT_class as Cons
-import ProducerMKT_class as Pros
-import MarketPlaceMKT as Mark
+from ConsumerCES_original import Consumer
+from ProducerMKT_class import Producer
+from MarketPlaceMKT import Market
+from EnvironmentMKT_class import Environment
 import numpy as np
-
+"""
 print "Welcome to the ECON world of CE group!(MarketVersion)"
 raw_input()
 print "Please follow us to set up all the details."
 raw_input()
 
 Type_of_consumers = int(input("Please determine how many types of consumers(more than 1):"))
+
 number_of_goods   = int(input("Please enter the number of goods:"))
 number_of_factors = int(input("Please enter the number of factors:"))
 
@@ -23,6 +25,10 @@ for i in range(Type_of_consumers):
         Agent_Type[i]=input("   Please set the parameters of consumption of type"+str(i+1)+"(["+str(number_of_goods)+" for alpha,1 for beta]):")
     People_of_Type[i] = int(input("Please determine how many people of this type are:"))
 
+number_consumers={}
+for i in range(Type_of_consumers):
+    number_consumers[i]=People_of_Type[i]
+    
 Agent_Type=np.array(Agent_Type,dtype=float)
 People_of_Type=np.array(People_of_Type,dtype=float)
 
@@ -41,12 +47,19 @@ for i in range(number_of_goods):
 
 Production_Par=np.array(Production_Par,dtype=float)
 
+Env=Environment(Agent_Type,People_of_Type,Factor_sup,Production_Par)()
+"""
+Env=Environment(np.array([[0.4,0.6,1.0]]),np.array([2]),np.array([1.0,1.0]),np.array([[2.0,1.0,0.0],[1.0,2.0,0.0]]))()
+
 'Give all the parameters to the welfare function'
-A=Mark.Market(Agent_Type,People_of_Type,Factor_sup,Production_Par)
 
-Prices=A.Price_Power()
-Result=A.Equilibrium()
+Market=Market(Env)
 
+print Market.Price_Equilibrium()
+print Market.Square_Excess_Demand(np.array(Market.Price_Equilibrium()['x']))
+
+
+"""
 for i in range(Type_of_consumers):
     print "The "+str(i+1)+" type of agent consumes goods: "+np.array2string(Result[i*(number_of_goods+number_of_factors):i*(number_of_goods+number_of_factors)+number_of_goods])
     print "The "+str(i+1)+" type of agent supplys factors: "+np.array2string(Result[i*(number_of_goods+number_of_factors)+number_of_goods:(i+1)*(number_of_goods+number_of_factors)])
@@ -54,3 +67,4 @@ for i in range(Type_of_consumers):
 for i in range(number_of_goods):
     print "The "+str(i+1)+" good is produced at the number: "+np.array2string(Result[(Type_of_consumers)*(number_of_goods+number_of_factors)+i*(number_of_factors+1)])
     print "The "+str(i+1)+" good is needed following factors: "+np.array2string(Result[(Type_of_consumers)*(number_of_goods+number_of_factors)+i*(number_of_factors+1)+1:(Type_of_consumers)*(number_of_goods+number_of_factors)+(i+1)*(number_of_factors+1)])
+"""

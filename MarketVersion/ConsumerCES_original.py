@@ -1,56 +1,44 @@
+import numpy as np
+from scipy.optimize import minimize
+        
 class Consumer:
     """This class is the optimization of individual choice of consumer"""
-    #def __init__(self,GoodPrices,FacPrices):
-    def __init__(self,alpha,beta,theta):
+    def __init__(self,alpha,beta,theta,environment):
         import numpy as np
-        #self.GoodPrices=np.array(GoodPrices)
-        #self.FacPrices=np.array(FacPrices)
-        self.alpha=np.array(alpha)
-        self.gamma=1.0
-        self.rho=0.0
-        self.beta=1.0*beta
-        self.theta=1.0*np.array(theta)
-        self.ng=len(self.alpha)
-        self.nf=len(self.theta)
+        self.alpha=alpha
+        self.gamma=0.5
+        self.sigma=0.0
+        self.beta=beta
+        self.theta=theta
+        self.env=environment
 
-    def utility(self,GFvec,sign=1.0):
-        from math import log
-        import numpy as np
-        """What's below is the linear algebra version of above equation"""
-        """Objective function of consumer utility"""
-        GFvec=np.array(GFvec[0:self.ng+self.nf])
-        #GFvec=np.array(GFvec[0:self.ng])
-        return sign*((self.alpha.dot(GFvec[0:self.ng]**self.gamma))**((1-self.rho)/self.gamma)-np.ones(len(self.theta)).dot(self.beta*GFvec[self.ng:(self.ng+self.nf)]**(self.theta+1)/(self.theta+1)))
-        #return sign*(self.alpha.dot(np.log(GFvec)))
+    def __call__(self,C,sign=1.0): #Utility
+        return sign*(sum(self.alpha*(C[0:self.env['ng']]**self.gamma))**((1-self.sigma)/self.gamma)-self.beta*sum(C[self.env['ng']]**(self.theta+1)/(self.theta+1)))
 
-    """def budget(self,GFvec):
-        import numpy as np
-        return 100-self.GoodPrices.dot(GFvec)"""
 
-    def cons(self):
-        """
+    """def cons(self):
+        
         1.Budget constraint
         2&3.Nonnegative criterias
-        """
+    
         import numpy as np
         return ({'type' : 'ineq',
                  'fun' : lambda GFvec: self.budget(GFvec)},
                 {'type' : 'ineq',
                  'fun' : lambda GFvec: GFvec})
-    """'fun' : lambda goods: np.array(self.FacPrices.dot(GFvec[self.ng:(self.ng+self.nf)])-self.GoodPrices.dot(GFvec[0:self.ng]))},"""
+    'fun' : lambda goods: np.array(self.FacPrices.dot(GFvec[self.ng:(self.ng+self.nf)])-self.GoodPrices.dot(GFvec[0:self.ng]))}
     
     def utility_max(self):
-        import numpy as np
-        from scipy.optimize import minimize
-        """
+    
+
         1.The package of minimize can be use as maximize ,if the
         objective function is multiply by -1.
         2."cons" set as the constrain of optimization problem.
         3.If we use SLSQP method, the jacobian of objective function is necessary.
         The jacobian means the partial derivative of every independent variables. 
-        """
         #GFvec=[[]]*(self.ng+self.nf)
-        """res = minimize(self.utility, np.ones(self.ng+self.nf), args=(-1.0,),"""
+        res = minimize(self.utility, np.ones(self.ng+self.nf), args=(-1.0,),
         res = minimize(self.utility, [10.0]*(self.ng+self.nf), args=(-1.0,),
                        constraints=self.cons(), method='SLSQP', options={'disp': True})
-        return res.x
+        return res.x """
+                
