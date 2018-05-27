@@ -38,8 +38,8 @@ for i in range(number_of_goods):
 
 Production_Par=np.array(Production_Par,dtype=float)
 
-''''Import all the parameters to the welfare function.
-Please refer to the WelfareCES.py.''''
+'''Import all the parameters to the welfare function.
+Please refer to the WelfareCES.py.'''
 A=Soc.Social(Agent_Type,People_of_Type,Factor_sup,Production_Par)
 #A.Welfare([1,1,1,1])
 #A.Welfare([1,1,1,1,3,1,1,3,1,1])
