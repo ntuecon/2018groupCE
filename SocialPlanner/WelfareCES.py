@@ -1,6 +1,6 @@
 #import ConsumerCES_class as cons
 class Social:
-    def __init__(self,Agent_Type,People_of_Type,Factor_sup,Production_Par):
+    def __init__(self,Agent_Type,People_of_Type,Factor_sup,Production_Par,InvPar):
         self.Agent_Type=Agent_Type
         self.People_of_Type=People_of_Type
         self.Factor_sup=Factor_sup
@@ -8,6 +8,7 @@ class Social:
         self.ng=self.Agent_Type.shape[1]-1
         self.nf=self.Factor_sup.shape[0]
         self.Production_Par=Production_Par
+        self.InvPar=InvPar
 
     def Welfare(self,SocialPlan,sign=1.0):
         '''The social welfare is simply the aggregation of individual utilitys.
@@ -15,11 +16,11 @@ class Social:
         import ConsumerCES_class as Cons
         import ProducerCES as Pros
         import numpy as np
-        SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))])
+        SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))],dtype=float)
         People=[[]]
         utility=[[]]*self.nt
         for i in range(self.nt):
-            People=Cons.Consumer(self.Agent_Type[i][0:self.ng],self.Agent_Type[i][self.ng],self.Factor_sup)
+            People=Cons.Consumer(self.Agent_Type[i][0:self.ng],self.Agent_Type[i][self.ng],self.Factor_sup,self.InvPar[0],self.InvPar[1])
             utility[i]=People.utility(SocialPlan[i*(self.ng+self.nf):(i+1)*(self.ng+self.nf)])
         utility=np.array(utility)
         return sign*self.People_of_Type.dot(utility)
