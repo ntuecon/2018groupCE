@@ -15,4 +15,4 @@ class Consumer:
         """What's below is the linear algebra version of CES utility equation."""
         """Objective function of consumer utility"""
         GFvec=np.array(GFvec[0:self.ng+self.nf],dtype=float)
-        return sign*((self.alpha.dot(GFvec[0:self.ng]**self.gamma))**((1-self.sigma)/self.gamma)-np.ones(len(self.theta)).dot(self.beta*GFvec[self.ng:(self.ng+self.nf)]**(self.theta+1)/(self.theta+1)))
+        return sign*(np.power(self.alpha.dot(np.power(GFvec[0:self.ng],self.gamma)),(1.0-self.sigma))/self.gamma)-np.ones(len(self.theta)).dot(self.beta*np.power(GFvec[self.ng:(self.ng+self.nf)],(self.theta+1.0))/(self.theta+1.0)))

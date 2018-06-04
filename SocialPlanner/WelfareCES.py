@@ -1,6 +1,9 @@
 #import ConsumerCES_class as cons
 class Social:
     def __init__(self,Agent_Type,People_of_Type,Factor_sup,Production_Par,InvPar):
+        import ConsumerCES_class as Cons
+        import ProducerCES as Pros
+        import numpy as np
         self.Agent_Type=Agent_Type
         self.People_of_Type=People_of_Type
         self.Factor_sup=Factor_sup
@@ -9,6 +12,26 @@ class Social:
         self.nf=self.Factor_sup.shape[0]
         self.Production_Par=Production_Par
         self.InvPar=InvPar
+        self.People=[[]]*self.nt
+        for i in range(self.nt):
+            self.People[i]=Cons.Consumer(self.Agent_Type[:,0:self.ng][i],
+                                         self.Agent_Type[:,self.ng:self.ng+1][i],
+                                         np.outer(np.ones((self.nt,1),dtype=float),self.Factor_sup)[i],
+                                         np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[0])[i],
+                                         np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[1])[i])
+        self.Firm=[[]]*self.ng
+        for i in range(self.ng):
+            self.Firm[i]=Pros.Product(self.Production_Par[:,0:self.nf][i],
+                                      self.Production_Par[:,self.nf:self.nf+1][i])
+#        self.People=np.apply_along_axis(Cons.Consumer,1,
+#                                        self.Agent_Type[:,0:self.ng],
+#                                        self.Agent_Type[:,self.ng:self.ng+1],
+#                                        np.outer(np.ones((self.nt,1),dtype=float),self.Factor_sup),
+#                                        np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[0]),
+#                                        np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[1]))
+#        self.Firm=np.apply_along_axis(Pros.Product,1,
+#                                      self.Production_Par[:,0:self.nf],
+#                                      self.Production_Par[:,self.nf:self.nf+1])
 
     def Welfare(self,SocialPlan,sign=1.0):
         '''The social welfare is simply the aggregation of individual utilitys.
@@ -16,12 +39,11 @@ class Social:
         import ConsumerCES_class as Cons
         import ProducerCES as Pros
         import numpy as np
-        SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))],dtype=float)
-        People=[[]]
+        SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))],
+                            dtype=float)
         utility=[[]]*self.nt
         for i in range(self.nt):
-            People=Cons.Consumer(self.Agent_Type[i][0:self.ng],self.Agent_Type[i][self.ng],self.Factor_sup,self.InvPar[0],self.InvPar[1])
-            utility[i]=People.utility(SocialPlan[i*(self.ng+self.nf):(i+1)*(self.ng+self.nf)])
+            utility[i]=self.People[i].utility(SocialPlan[i*(self.ng+self.nf):(i+1)*(self.ng+self.nf)])
         utility=np.array(utility)
         return sign*self.People_of_Type.dot(utility)
 
@@ -31,12 +53,10 @@ class Social:
         technology is written in the ProducerCES.py'''
         import ProducerCES as Pros
         import numpy as np
-        Product=[[]]
         NT=np.zeros((self.nt,self.nt),float)
         np.fill_diagonal(NT,self.People_of_Type)
         for i in range(self.ng):
-            Product=Pros.Product(self.Production_Par[i][0:self.nf],self.Production_Par[i][self.nf])
-            SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)]=Product.Tech(SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)+1:self.nt*(self.ng+self.nf)+(i+1)*(1+self.nf)])
+            SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)]=self.Firm[i].Tech(SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)+1:self.nt*(self.ng+self.nf)+(i+1)*(1+self.nf)])
         ProSide=SocialPlan[self.nt*(self.ng+self.nf):]
         ProSide=np.reshape(ProSide,(self.ng,1+self.nf))
         TotalProduct=ProSide[:,0]
