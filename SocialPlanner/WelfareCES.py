@@ -45,6 +45,7 @@ class Social:
         for i in range(self.nt):
             utility[i]=self.People[i].utility(SocialPlan[i*(self.ng+self.nf):(i+1)*(self.ng+self.nf)])
         utility=np.array(utility)
+        ###Where to place the package
         return sign*self.People_of_Type.dot(utility)
 
     def Technology(self,SocialPlan):
