@@ -39,14 +39,17 @@ class Social:
         import ConsumerCES_class as Cons
         import ProducerCES as Pros
         import numpy as np
+        import Vaccination as Vac
         SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))],
                             dtype=float)
         utility=[[]]*self.nt
         for i in range(self.nt):
             utility[i]=self.People[i].utility(SocialPlan[i*(self.ng+self.nf):(i+1)*(self.ng+self.nf)])
         utility=np.array(utility)
-        ###Where to place the package
-        return sign*self.People_of_Type.dot(utility)
+        ###Where to place the package of Vaccination
+        Ind_EU=Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,self.nt,self.ng,self.nf)
+        return sign*self.People_of_Type.dot(Ind_EU)
+        #return sign*self.People_of_Type.dot(utility)
 
     def Technology(self,SocialPlan):
         '''This function guarantees the goods variables in SocialPlan are
