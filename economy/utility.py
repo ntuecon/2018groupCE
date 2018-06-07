@@ -56,15 +56,17 @@ class Utility(object):
 
 class Expected_Utility(object):
     
-    def __init__(self, Utility, parameters):
+    def __init__(self, X, i, Utility, parameters):
+        self.X = X
+        self.i = i
         self.Utility = Utility 
         self.parameters = parameters
 
         
     def _call__(self, X, i, parameters, env):
         H = env['n_consumers']
-        p = self.parameters['c'] / (self.parameters['a']*(self.Utility.X[self.Utilitiy.i] + self.parameters['b']*np.sum[self.Utility.X[0:H]]) + 1)
-        u_ill = self.parameters['e'] * self.Utility() - self.parameters['f']
-        u_health = self.Utility()
+        p = self.parameters['c'] / (self.parameters['a']*(self.X[self.i] + self.parameters['b']*np.sum[self.X[0:H]]) + 1)
+        u_ill = self.parameters['e'] * self.Utility(X, i, env) - self.parameters['f']
+        u_health = self.Utility(X, i, env)
         EU = p * u_ill + (1 - p)*u_health
         return EU
