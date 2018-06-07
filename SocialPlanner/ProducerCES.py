@@ -8,4 +8,4 @@ class Product:
         '''This is simply the technology function.'''
         import numpy as np
         FacDemand=np.array(FacDemand,dtype=float)
-        return sign*(self.psi.dot(FacDemand**(1.0-self.ksi)/(1.0-self.ksi)))
+        return sign*(self.psi.dot(np.power(FacDemand,(1.0-self.ksi))/(1.0-self.ksi)))
