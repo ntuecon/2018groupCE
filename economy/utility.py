@@ -5,11 +5,11 @@ Created on Apr 16, 2018
 '''
 import numpy as np
 from functions import FlexibleCrossProduct   
-        return u
 
 class CESUtility(object):
-    def __init__(self, uparameters):
-        self.parameters=parameters
+    def __init__(self, uparameters,i,env):
+        self.env=self.env
+        self.uparameters=uparameters
         """X=   [v1,v2,...vH,
                 x11,x21,...,xG1,f11,f21,...fF1,
                 x12,x22,...,xG2,f12,f22,...fF2,
@@ -26,32 +26,46 @@ class CESUtility(object):
         self.parameters['thetas']=paramaters['thetas']
         """
 
-    def __call__(self, X, i,env): 
+    def __call__(self, X): 
         '''
         i=0,1,2,...,H
         This makes the utility function a callable function
         '''
-        G=env['nog']
-        F=env['nof']
-        H=env['noc']
+        G=self.env['nog']
+        F=self.env['nof']
+        H=self.env['noc']
         #Here we need to check if the passed parameters c are of the correct datatype
-        n=H+i*(G+F)
+        n=H+self.i*(G+F)
         # r is the exponent inside of the sum. Careful: an elasticity close to zero currently breaks the code. (Requires case distinction)
-        nog=len(self.parameters['alphas'])
-        u_goods=(np.dot(self.parameters['alphas'], X[(n) : (nog+1)]**self.parameters['gamma']))**(1/self.parameters['gamma'])
-        u_factors=self.parameters['beta']*np.sum(np.power(X[nog+1:55],(1+self.parameters['thetas']))/(1+self.parameters['thetas']))
+        nog=len(self.uparameters['alphas'])
+        U_goods=(np.dot(self.uparameters['alphas'], X[n : n+G]**self.uparameters['gamma']))**(1/self.uparameters['gamma'])
+        U_factors=self.uparameters['beta']*np.sum(np.power(X[n+G : n+G+F],(1+self.uparameters['thetas']))/(1+self.uparameters['thetas']))
         
         #We need to scale and shift the utility function by the appropriate parameters
-        u=u_goods-u_factors      
-        return u
+        U=U_goods-U_factors      
+        return U
 
-class ExpectedUtility(CESUtility):
-    def __init__(self,uparameters,extparameters):
+class ExpectedUtility(object):
+    def __init__(self,Utility,extparameters,i,env):
+
+        self.Utility=Utility
+        self.extparameters=extparameters
+        self.i=i
+        self.env=env
+
+        """
+        self.extparameters['a'] = extparameters['a']
+        self.extparameters['b'] = extparameters['b']
+        self.extparameters['c'] = extparameters['c']
+        self.extparameters['f'] = extparameters['f']
         
-        self.uparameters=uparameters
-        sefl.extparameters=extparameters
-
+        """
         
-    def _call__(self,c,ext):
-        EU=CESUtility(self.uparameters)(c)*(1-self.extparameters['c']/((c[0]*self.extparameters['gamma']+np.sum(ext**self.extparameters['gamma']))**(1/self.extparameters['gamma'])+1))
-
+    def _call__(self,X,ext):
+        """ext=[v1,v2,...,v(H)]"""
+        G=self.env['nog']
+        F=self.env['nof']
+        H=self.env['noc']
+        p=self.extparameters['c']/(self.extparameters['a']*(X[self.i]+self.extparameters['b']*np.sum(ext))+1)
+        EU=p*(self.Utility(X)-self.extparameters['f'])+(1-p)*self.Utility(X)
+        return EU
