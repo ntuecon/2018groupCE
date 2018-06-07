@@ -4,54 +4,67 @@ Created on Apr 16, 2018
 @author: Hendrik Rommeswinkel
 '''
 import numpy as np
-from functions import FlexibleCrossProduct   
-        return u
 
-class CESUtility(object):
-    def __init__(self, uparameters):
-        self.parameters=parameters
-        """X=   [v1,v2,...vH,
-                x11,x21,...,xG1,f11,f21,...fF1,
-                x12,x22,...,xG2,f12,f22,...fF2,
-                .
-                .
-                .
-                x1H,x2H,...,xGH,f1H,f2H,...fFH,
-                r11,r12,...,r1F,r21,r22,...,r2F,....,rG1,rG2,...,rGF,rV1,rV2,...,rVF]"""
+class Utility(object):
+    
+    def __init__(self, parameters):
         
-        """
-        self.parameters['alphas'] = parameters['alphas']
+        """This constructs the utility class
+        X =    [v1,v2,...vH,
+                x11,x21,...,x1G,f11,f12,...f1F,
+                x21,x22,...,x2G,f21,f22,...f2F,
+                .
+                .
+                .
+                xH1,xH2,...,xHG,fH1,fH2,...fHF,
+                r11,r12,...,r1F,r21,r22,...,r2F,....,rG1,rG2,...,rGF,
+                rV1,rV2,...,rVF]
+        
+        self.parameters['alpha'] = parameters['alpha']
         self.parameters['gamma'] = parameters['gamma']
         self.parameters['beta'] = parameters['exponent']
-        self.parameters['thetas']=paramaters['thetas']
+        self.parameters['theta'] = paramaters['theta']
         """
+        self.parameters = parameters
 
-    def __call__(self, X, i,env): 
-        '''
-        i=0,1,2,...,H
-        This makes the utility function a callable function
-        '''
-        G=env['nog']
-        F=env['nof']
-        H=env['noc']
-        #Here we need to check if the passed parameters c are of the correct datatype
-        n=H+i*(G+F)
-        # r is the exponent inside of the sum. Careful: an elasticity close to zero currently breaks the code. (Requires case distinction)
-        nog=len(self.parameters['alphas'])
-        u_goods=(np.dot(self.parameters['alphas'], X[(n) : (nog+1)]**self.parameters['gamma']))**(1/self.parameters['gamma'])
-        u_factors=self.parameters['beta']*np.sum(np.power(X[nog+1:55],(1+self.parameters['thetas']))/(1+self.parameters['thetas']))
+
+    def __call__(self, X, i, env): 
         
-        #We need to scale and shift the utility function by the appropriate parameters
-        u=u_goods-u_factors      
+        """This makes the utility function a callable function
+        i = 0, 1, 2, ..., H
+        """
+        G = env['n_goods']
+        F = env['n_factors']
+        H = env['n_consumers']
+        
+        # Here we need to check if the passed parameters c are of the correct 
+        # datatype
+        # We define a float that lets us access the relevant line in our matrix
+        # X depending on the index of the individual
+        n = H + i*(G+F) 
+        # Next we compute the utility derived from the goods consumed and the
+        # disutility from the factors supplied
+        # Functions taken from the lecture slides
+        u_goods = np.dot(self.parameters['alpha'], (X[n:(G+n)] ** self.parameters['gamma'])) ** (1/self.parameters['gamma'])
+        u_factors = self.parameters['beta'] * np.sum(np.power(X[(n+G): (n+G+F)], (1+self.parameters['theta'])) / (1+self.parameters['theta']))
+        
+        # Goods factor positively, factors factor negatively into the utility 
+        # function
+        u = u_goods - u_factors      
         return u
 
-class ExpectedUtility(CESUtility):
-    def __init__(self,uparameters,extparameters):
-        
-        self.uparameters=uparameters
-        sefl.extparameters=extparameters
+
+class Expected_Utility(object):
+    
+    def __init__(self, Utility, parameters):
+        self.Utility = Utility 
+        self.parameters = parameters
 
         
-    def _call__(self,c,ext):
-        EU=CESUtility(self.uparameters)(c)*(1-self.extparameters['c']/((c[0]*self.extparameters['gamma']+np.sum(ext**self.extparameters['gamma']))**(1/self.extparameters['gamma'])+1))
-
+    def _call__(self, X, i, parameters, env):
+        H = env['n_consumers']
+        p = self.parameters['c'] / (self.parameters['a']*(self.Utility.X[self.Utilitiy.i] + self.parameters['b']*np.sum[self.Utility.X[0:H]]) + 1)
+        u_ill = self.parameters['e'] * self.Utility() - self.parameters['f']
+        u_health = self.Utility()
+        EU = p * u_ill + (1 - p)*u_health
+        return EU
