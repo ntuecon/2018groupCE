@@ -48,8 +48,8 @@ class Social:
         utility=np.array(utility)
         ###Where to place the package of Vaccination
         Ind_EU=Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,self.nt,self.ng,self.nf)
-        return sign*self.People_of_Type.dot(Ind_EU)
-        #return sign*self.People_of_Type.dot(utility)
+        return sign*np.dot(self.People_of_Type,Ind_EU)
+        #return sign*np.dot(self.People_of_Type,utility)
 
     def Technology(self,SocialPlan):
         '''This function guarantees the goods variables in SocialPlan are
