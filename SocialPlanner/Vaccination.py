@@ -11,13 +11,13 @@ def infect_Pr(Ind_Vaccin,People_of_Type):
     Effect_Vaccin=3.0
     Weight=3.0
     gamma=1.0
-    Total_Vaccin=People_of_Type.dot(Ind_Vaccin)
+    Total_Vaccin=np.dot(People_of_Type,Ind_Vaccin)
     return Base_Pr/(Effect_Vaccin*np.power(np.power(Ind_Vaccin,gamma)+Weight*np.power(Total_Vaccin,gamma),gamma)+1)
     #return Base_pr/(A*np.power(Ind_Vaccin,alpha)*np.power(Total_Vaccin,1-alpha)+1.0)
 
 def Expected_Uti(utility,SocialPlan,People_of_Type,nt,ng,nf):
     utility=np.array(utility,dtype=float)
-    ConsumerPlan=np.array(np.reshape(SocialPlan[nt*(ng+nf)],(nt,(ng+nf))),dtype=float)
+    ConsumerPlan=np.array(np.reshape(SocialPlan[0:nt*(ng+nf)],(nt,(ng+nf))),dtype=float)
     People_of_Type=np.array(People_of_Type,dtype=float)
     Health_dis=0.5
     Absolute_weak=2.0

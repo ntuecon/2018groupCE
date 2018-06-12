@@ -58,9 +58,6 @@ Production_Par=np.array(Production_Par,dtype=float)
 """Import all the parameters to the welfare function.
 Please refer to the WelfareCES.py."""
 A=Soc.Social(Agent_Type,People_of_Type,Factor_sup,Production_Par,Inv_Par)
-#A.Welfare([1,1,1,1])
-#A.Welfare([1,1,1,1,3,1,1,3,1,1])
-#(g1,g2,f1,f2,p1,cf1,cf2,p2,cf1,cf2)
 
 '''Use the function defined in the WelfareCES.py.'''
 Result=A.Welfare_max()
