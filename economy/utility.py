@@ -21,9 +21,9 @@ class CESUtility(object):
         
         """
         self.parameters['alphas'] = parameters['alphas']
-        self.parameters['gamma'] = parameters['gamma']
-        self.parameters['beta'] = parameters['exponent']
-        self.parameters['thetas']=paramaters['thetas']
+        self.parameters['gamma'] = parameters['gamma'] --> put it in another class (Economy)
+        self.parameters['beta'] = parameters['bera']  
+        self.parameters['thetas']=paramaters['thetas'] --> put it in another class (Factor)
         """
 
     def __call__(self, X): 
@@ -34,14 +34,10 @@ class CESUtility(object):
         G=self.env['nog']
         F=self.env['nof']
         H=self.env['noc']
-        #Here we need to check if the passed parameters c are of the correct datatype
         n=H+self.i*(G+F)
-        # r is the exponent inside of the sum. Careful: an elasticity close to zero currently breaks the code. (Requires case distinction)
         nog=len(self.uparameters['alphas'])
         U_goods=(np.dot(self.uparameters['alphas'], X[n : n+G]**self.uparameters['gamma']))**(1/self.uparameters['gamma'])
         U_factors=self.uparameters['beta']*np.sum(np.power(X[n+G : n+G+F],(1+self.uparameters['thetas']))/(1+self.uparameters['thetas']))
-        
-        #We need to scale and shift the utility function by the appropriate parameters
         U=U_goods-U_factors      
         return U
 
@@ -58,6 +54,7 @@ class ExpectedUtility(object):
         self.extparameters['b'] = extparameters['b']
         self.extparameters['c'] = extparameters['c']
         self.extparameters['f'] = extparameters['f']
+        self.extparameters['e']=extaparameters['e']
         
         """
         
@@ -67,5 +64,22 @@ class ExpectedUtility(object):
         F=self.env['nof']
         H=self.env['noc']
         p=self.extparameters['c']/(self.extparameters['a']*(X[self.i]+self.extparameters['b']*np.sum(ext))+1)
-        EU=p*(self.Utility(X)-self.extparameters['f'])+(1-p)*self.Utility(X)
+        EU=p*(self.extparameters['e']*self.Utility(X)-self.extparameters['f'])+(1-p)*self.Utility(X)
         return EU
+
+
+class Social_Welfare(object):
+
+    def __init__(self,consumers,producers,env):
+        self.consumers=consumers #list of consumers
+        self.producers=producers #list of producer
+        self.env=env
+
+    def __call__(X):
+        G=self.env['nog']
+        F=self.env['nof']
+        H=self.env['noc']
+        res=0
+        for consumer in consumers:
+            res+=consumer.Expected_Utility(X,X[0:H])
+        return res

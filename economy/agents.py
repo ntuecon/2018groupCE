@@ -5,10 +5,11 @@ Created on Apr 16, 2018
 '''
 import numpy as np
 from scipy.optimize import minimize
-from utility import CESUtility, ExpectedUtility
+from utility import CESUtility, ExpectedUtility, Social_Welfare
+from technology import Technology
 class Consumer(object):
     
-    def __init__(self,i,environment, uparameters):
+    def __init__(self,uparameters,extparameters,i,env):
         
         self.i=i
         self.uparameters=uparameters
@@ -19,12 +20,25 @@ class Consumer(object):
         
 
 class Producer(object):
-    pass
 
-        
-        
-class Government(object):
-    pass
+    def __init__(self,parameters,i,env):
+        self.i=i
+        self.env=env
+        self.parameters=parameters
+        self.Production=Technology(self.parameters,self.i,self.env)
+
+class SocialPlanner(object):
+
+    def __init__(self,consumers,producers,env):
+        self.consumers=consumers
+        self.producers=producers
+        self.env=env
+        self.AggregateWelfare=Social_Welfare(consumers,producers,env)
+
+    def constraints(self):
+        pass
+    def maximization(self):
+        pass
 
 
 
