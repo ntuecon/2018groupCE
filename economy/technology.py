@@ -29,6 +29,6 @@ class Technology(object):
         F=self.env['nof']
         H=self.env['noc']
         n=H+(G+F)*H+i*F
-        Prod_i=np.dot(self.parameters['psis']/(1-self.parameters['ksis']),np.power(X[n : n+F],1-self.parameters['ksis']))
+        Prod_i=np.dot(self.parameters['psis']/(1-self.env['ksis']),np.power(X[n : n+F],1-self.env['ksis']))
         return Prod_i
 

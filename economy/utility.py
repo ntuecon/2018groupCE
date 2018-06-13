@@ -4,7 +4,7 @@ Created on Apr 16, 2018
 @author: Hendrik Rommeswinkel
 '''
 import numpy as np
-from functions import FlexibleCrossProduct   
+from functions import FlexibleCrossProduct,externalities
 
 class CESUtility(object):
     def __init__(self, uparameters,i,env):
@@ -20,10 +20,8 @@ class CESUtility(object):
                 r11,r12,...,r1F,r21,r22,...,r2F,....,rG1,rG2,...,rGF,rV1,rV2,...,rVF]"""
         
         """
-        self.parameters['alphas'] = parameters['alphas']
-        self.parameters['gamma'] = parameters['gamma'] --> put it in another class (Economy)
-        self.parameters['beta'] = parameters['bera']  
-        self.parameters['thetas']=paramaters['thetas'] --> put it in another class (Factor)
+        self.uparameters['alphas'] = uparameters['alphas']
+        self.uparameters['beta'] = uparameters['beta']
         """
 
     def __call__(self, X): 
@@ -36,8 +34,8 @@ class CESUtility(object):
         H=self.env['noc']
         n=H+self.i*(G+F)
         nog=len(self.uparameters['alphas'])
-        U_goods=(np.dot(self.uparameters['alphas'], X[n : n+G]**self.uparameters['gamma']))**(1/self.uparameters['gamma'])
-        U_factors=self.uparameters['beta']*np.sum(np.power(X[n+G : n+G+F],(1+self.uparameters['thetas']))/(1+self.uparameters['thetas']))
+        U_goods=((self.uparameters['alphas'][0]*X[i]**self.env['gamma']+np.dot(self.uparameters['alphas'][1:], X[n : n+G]**self.env['gamma'])))**(1/self.env['gamma'])
+        U_factors=self.uparameters['beta']*np.sum(np.power(X[n+G : n+G+F],(1+self.env['thetas']))/(1+self.env['thetas']))
         U=U_goods-U_factors      
         return U
 
@@ -56,15 +54,14 @@ class ExpectedUtility(object):
         self.extparameters['f'] = extparameters['f']
         self.extparameters['e']=extaparameters['e']
         
-        """
-        
+        """  
     def _call__(self,X,ext):
         """ext=[v1,v2,...,v(H)]"""
         G=self.env['nog']
         F=self.env['nof']
         H=self.env['noc']
-        p=self.extparameters['c']/(self.extparameters['a']*(X[self.i]+self.extparameters['b']*np.sum(ext))+1)
-        EU=p*(self.extparameters['e']*self.Utility(X)-self.extparameters['f'])+(1-p)*self.Utility(X)
+        p=self.extparameters['a']/(self.extparameters['b']*(X[self.i]+externalities(X,self.env['noc'])[self.i])+1)
+        EU=p*(self.extparameters['c']*self.Utility(X)+self.extparameters['d'])+(1-p)*(self.Utility(X)-self.extparameters['e'])
         return EU
 
 
