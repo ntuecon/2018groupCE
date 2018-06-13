@@ -23,6 +23,7 @@ def environment(Economy,Goods,Factors):
     env['nof']=Economy.nof
     env['noty']=Economy.noty
     env['noc']=Economy.noc
+    env['gamma']=Economy.gamma
 
     ksis=np.zeros(env['nog'])
     for g in range(env['nog']):

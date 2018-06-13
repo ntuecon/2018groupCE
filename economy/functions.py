@@ -13,10 +13,14 @@ def FlexibleCrossProduct(a,b):
     '''
     return np.append(a,np.zeros(0 if (len(b) - len(a))<0 else (len(b) - len(a))))*np.append(b,np.zeros(0 if (len(a) - len(b))<0 else (len(a) - len(b))))
 
+def externality(X,noc,i):
+    L=[j for j in range(noc) if j!=i]
+    return np.sum([X[j] for j in L])
+
 def externalities(X,noc):
     L=[[]]*noc
     EXT=[[]]*noc
-    for i in noc:
+    for i in range(noc):
         L[i]=[j for j in range(noc) if j!=i]
         EXT[i]=np.sum([X[j] for j in L[i]])
-    return EXT
+    return np.array(EXT)
