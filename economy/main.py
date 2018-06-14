@@ -1,11 +1,12 @@
 import numpy as np
 from utility import CESUtility, ExpectedUtility, Social_Welfare
-from environment import Economy,Factor,Good,environment
+from objects import Good,Factor
+from economy import Economy
 from agents import Consumer,Producer,SocialPlanner
 from scipy.optimize import minimize
-a=[0.1,0.4,0.2,3.0]
-b=[0.1,0.3,0.4,2.0]
-c=[0.0,0.2,0.3,4.0]
+a=[0.3,0.3,0.4,2.0]
+b=[0.4,0.3,0.3,2.0]
+c=[0.3,0.4,0.3,2.0]
 o=[1.0,1.0]
 
 #The part is just for the introduction
@@ -22,18 +23,15 @@ number_of_goods   = int(input("Please enter the number of goods (the first good 
 number_of_factors = int(input("Please enter the number of factors:"))
 gamma = float(input("Please enter the gamma of your economy:"))
 number_of_types = int(input("Please determine how many types of consumers(more than 1):"))
-number_of_consumers=[]
+number_of_consumers_by_type=[]
 for i in range(number_of_types):
-    number_of_consumers.append(int(input('Please determine how many consumers(more than 1) in type %s:' % (i))))
-
-#Here we build our economy
-ECO=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers)
-
+    number_of_consumers_by_type.append(int(input('Please determine how many consumers(more than 1) in type %s:' % (i))))
+total_number_of_consumers=int(sum(number_of_consumers_by_type))
 
 print "\n Now let's set the parameters for goods"
 raw_input()
-Goods=[[]]*ECO.nog
-for g in range(ECO.nog):
+Goods=[[]]*number_of_goods
+for g in range(number_of_goods):
     if g==0:
         Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'public')
     else:
@@ -41,64 +39,40 @@ for g in range(ECO.nog):
 
 print "\n Now let's set the parameters for factors"
 raw_input()
-Factors=[[]]*ECO.nof
-for f in range(ECO.nof):
+Factors=[[]]*number_of_factors
+for f in range(number_of_factors):
     Factors[f]=Factor(float(input('Please determine theta for factor %s(more than 1):' % (f))))
-
-#Here we build our environment
-env=environment(ECO,Goods,Factors)
 
 print "\n Now let's set the parameters for consumers"
 raw_input()
-alphas=[[]]*env['noty']
-betas=np.zeros(env['noty'])
-for ty in range(env['noty']):
+alphas=[[]]*number_of_types
+betas=np.zeros(number_of_types)
+for ty in range(number_of_types):
     para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
-    alphas[ty]=np.array(para[0:env['nog']])
-    betas[ty]=para[env['nog']]
+    alphas[ty]=np.array(para[0:number_of_goods ])
+    betas[ty]=para[number_of_goods]
 
 print "\n Now let's set the parameters for producers"
 raw_input()
-psis=[[]]*env['nog']
-for g in range(env['nog']):
+psis=[[]]*number_of_goods 
+for g in range(number_of_goods):
     psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
 
 
-extparameters={'a':0.5}
 
-#Here we create our consumers
-Consumers=[]
-for ty in range(env['noty']):
-    uparameters={}
-    uparameters['alphas']=alphas[ty]
-    uparameters['beta']=betas[ty]
-    if ty==0:
-        for h in range(env['noc'][ty]):
-            Consumers.append(Consumer(uparameters,extparameters,h,env))
-    else:
-        n=int(sum([env['noc'][j] for j in range(ty)]))
-        for h in range(n,n+env['noc'][ty]):
-            Consumers.append(Consumer(uparameters,extparameters,h,env))
 
-#Here we create our producers
-Producers=[]
-for g in range(env['nog']):
-    techparameters={}
-    techparameters['psis']=psis[g]
-    Producers.append(Producer(techparameters,g,env))
+ECO=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers_by_type,total_number_of_consumers,Goods,Factors,alphas,betas,psis)
+dictio_ECO=ECO()
 
-#Here we create a social planner
-SP=SocialPlanner(Consumers,Producers,env)
-
-maxi=SP.maximization(0.0,0.0,0.0)
-sick=0.5/(1+sum(maxi['x'][0:sum(env['noc'])]))
+maxi=ECO.SocialPlanner.maximization(0.0,0.0,0.0)
+sick=0.5/(1+sum(maxi['x'][0:ECO.env['H']]))
 
 def Conclusion(sick,maxi):
     print "RESULTS : \n" \
           "Total welfare : %s. \n" \
           "Consumption of vaccination : %s. \n" \
           "Total consumption of vaccination : %s. \n" \
-          "Probability of getting sick : %s. \n" %(-maxi['fun'],maxi['x'][0:sum(env['noc'])],sum(maxi['x'][0:sum(env['noc'])]),sick)
+          "Probability of getting sick : %s. \n" %(-maxi['fun'],maxi['x'][0:ECO.env['H']],sum(maxi['x'][0:ECO.env['H']]),sick)
 Conclusion(sick,maxi)
 raw_input()
 
@@ -122,12 +96,12 @@ def Give_penality(i):
                     "Choose a reasonable number according to the current total welfare value (%s)"%(maxi['fun'])
             raw_input()
             penality=float(input('Please try one level of penality :'))
-            pmaxi=SP.maximization(penality,0.0,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+            pmaxi=ECO.SocialPlanner.maximization(penality,0.0,0.0)
+            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
         else:
             penality=float(input('Please try one level of penality :'))
-            pmaxi=SP.maximization(penality,0.0,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+            pmaxi=ECO.SocialPlanner.maximization(penality,0.0,0.0)
+            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
 
         Conclusion(psick,pmaxi)
 
@@ -138,12 +112,12 @@ def Give_reward(i):
                     "Choose a reasonable number according to the current total welfare value (%s)" %(maxi['fun'])
             raw_input()
             reward=float(input('Please try one level of reward :'))
-            pmaxi=SP.maximization(0.0,reward,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+            pmaxi=ECO.SocialPlanner.maximization(0.0,reward,0.0)
+            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
         else:
             reward=float(input('Please try one level of reward :'))
-            pmaxi=SP.maximization(0.0,reward,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+            pmaxi=ECO.SocialPlanner.maximization(0.0,reward,0.0)
+            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
 
         Conclusion(psick,pmaxi)
 
@@ -155,12 +129,12 @@ def Help_prod(i):
                 "Choose a reasonable number according to the current consumption of vaccination %s (total = %s)." %(maxi['x'][0:int(sum(env['noc']))],sum(maxi['x'][0:int(sum(env['noc']))]))
         raw_input()
         help_prod=float(input('Please try one value to boost production :'))
-        pmaxi=SP.maximization(0.0,0.0,help_prod)
-        psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+        pmaxi=ECO.SocialPlanner.maximization(0.0,0.0,help_prod)
+        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
     else:
         help_prod=float(input('Please try one value to boost production :'))
-        pmaxi=SP.maximization(0.0,0.0,help_prod)
-        psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+        pmaxi=ECO.SocialPlanner.maximization(0.0,0.0,help_prod)
+        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
 
     Conclusion(psick,pmaxi)
 
@@ -173,15 +147,15 @@ def Mix_policy(i):
         if len(mix_policy)!=3:
             print 'Make you have a vector of three values.\n'
             mix_policy=np.array(input('Please try three values (list) of penality, reward and helping production :'),dtype=float)
-        pmaxi=SP.maximization(mix_policy[0],mix_policy[1],mix_policy[2])
-        psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+        pmaxi=ECO.SocialPlanner.maximization(mix_policy[0],mix_policy[1],mix_policy[2])
+        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
     else:
         mix_policy=np.array(input('Please try three values (list) of penality, reward and helping production :'),dtype=float)
         if len(mix_policy)!=3:
             print 'Make you have a vector of three values.\n'
             mix_policy=np.array(input('Please try three values (list) of penality, reward and helping production :'),dtype=float)
-        pmaxi=SP.maximization(mix_policy[0],mix_policy[1],mix_policy[2])
-        psick=0.5/(1+sum(pmaxi['x'][0:sum(env['noc'])]))
+        pmaxi=ECO.SocialPlanner.maximization(mix_policy[0],mix_policy[1],mix_policy[2])
+        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
 
     Conclusion(psick,pmaxi)
     

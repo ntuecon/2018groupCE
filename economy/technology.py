@@ -22,9 +22,9 @@ class Technology(object):
         """
         
     def __call__(self,X,prod_help=0.0):
-        G=self.env['nog']
-        F=self.env['nof']
-        H=sum(self.env['noc'])
+        G=self.env['G']
+        F=self.env['F']
+        H=self.env['H']
         n=H*(G+F)+self.i*F
         if self.i==0:
             Prod_i=np.dot(self.parameters['psis'],(X[n: n+F]+prod_help)**(self.env['ksis'][self.i]))/self.env['ksis'][self.i]

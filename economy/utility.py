@@ -31,9 +31,9 @@ class CESUtility(object):
         i=0,1,2,...,H
         This makes the utility function a callable function
         '''
-        G=self.env['nog']
-        F=self.env['nof']
-        H=sum(self.env['noc'])
+        G=self.env['G']
+        F=self.env['F']
+        H=self.env['H']
         n=H+self.i*(G-1+F)
         nog=len(self.uparameters['alphas'])
         U_goods=((self.uparameters['alphas'][0]*X[self.i]**self.env['gamma']+np.dot(self.uparameters['alphas'][1:], X[n : n+G-1]**self.env['gamma'])))**(1/self.env['gamma'])
@@ -55,9 +55,9 @@ class ExpectedUtility(object):
         """  
     def __call__(self,X,ext,penality=0.0,reward=0.0):
         
-        G=self.env['nog']
-        F=self.env['nof']
-        H=sum(self.env['noc'])
+        G=self.env['G']
+        F=self.env['F']
+        H=self.env['H']
         p=self.extparameters['a']/((X[self.i]+np.sum(ext))**(1/0.5)+1)
         EU=(1-p)*(self.Utility(X)+reward)+p*(self.Utility(X)-penality)
         return EU
@@ -71,9 +71,9 @@ class Social_Welfare(object):
         self.env=env
 
     def __call__(self,X,sign=1.0,penality=0.0,reward=0.0):
-        G=self.env['nog']
-        F=self.env['nof']
-        H=sum(self.env['noc'])
+        G=self.env['G']
+        F=self.env['F']
+        H=self.env['H']
         res=0
         for consumer in self.consumers:
             res+=consumer.ExpectedUtility(X,externality(X,H,consumer.i),reward,penality)
