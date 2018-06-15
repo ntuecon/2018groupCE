@@ -78,7 +78,3 @@ class Economy:
         dictio['psis']=np.array(self.psis)
 
         return dictio
-
-    
-
-        

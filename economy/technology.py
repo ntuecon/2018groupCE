@@ -31,4 +31,3 @@ class Technology(object):
         else:
             Prod_i=np.dot(self.parameters['psis'],X[n: n+F]**(self.env['ksis'][self.i]))/self.env['ksis'][self.i]
         return Prod_i
-

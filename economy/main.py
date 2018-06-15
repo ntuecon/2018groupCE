@@ -5,8 +5,8 @@ from economy import Economy
 from agents import Consumer,Producer,SocialPlanner
 from scipy.optimize import minimize
 a=[0.3,0.3,0.4,2.0]
-b=[0.4,0.3,0.3,2.0]
-c=[0.3,0.4,0.3,2.0]
+b=[0.3,0.3,0.4,2.0]
+c=[0.3,0.3,0.4,2.0]
 o=[1.0,1.0]
 
 #The part is just for the introduction
@@ -228,7 +228,6 @@ number_of_goods=3
 number_of_factors=2
 number_of_types=3
 number_of_consumers=[1,1,1]
-
 E=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers)
 Goods=[]
 for g in range(E.nog):
@@ -236,41 +235,29 @@ for g in range(E.nog):
         Goods.append(Good(0.5,'public'))
     else:
         Goods.append(Good(0.5,'private'))
-
 Factors=[]
 for f in range(E.nof):
     Factors.append(Factor(1.0))
-
 Env=environment(E,Goods,Factors)
-
 alphas_type0=a[0:E.nog]
 beta_type0=a[E.nog]
 uparameters_type0={'alphas':alphas_type0,'beta':beta_type0}
-
 alphas_type1=b[0:E.nog]
 beta_type1=b[E.nog]
 uparameters_type1={'alphas':alphas_type1,'beta':beta_type1}
-
 alphas_type2=c[0:E.nog]
 beta_type2=c[E.nog]
 uparameters_type2={'alphas':alphas_type2,'beta':beta_type2}
-
 extparameters={'a':0.5,'b':1.0,'c':1.0,'d':0.0,'e':0.0}
-
 Consumers=[Consumer(uparameters_type0,extparameters,0,Env),Consumer(uparameters_type1,extparameters,1,Env),Consumer(uparameters_type2,extparameters,2,Env)]
-
 techparameters={'psis':np.full(Env['nof'],1,dtype=float)}
-
 Producers=[]
 for g in range(Env['nog']):
     Producers.append(Producer(techparameters,g,Env))
-
 SocialWelfare=Social_Welfare(Consumers,Producers,Env)
-
 SP=SocialPlanner(Consumers,Producers,Env)
 maxi=SP.maximization()
 print maxi
 print 'Probability of getting sick : ',0.5/(1+sum(maxi['x'][0:sum(Env['noc'])]))
 print 'Aggregate welfare : ',-maxi['fun']
 """
-

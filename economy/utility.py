@@ -1,10 +1,9 @@
 '''
 Created on Apr 16, 2018
-
 @author: Hendrik Rommeswinkel
 '''
 import numpy as np
-from functions import FlexibleCrossProduct,externality
+from functions import FlexibleCrossProduct,externalities,externality
 from scipy.optimize import minimize
 
 class CESUtility(object):
@@ -58,7 +57,7 @@ class ExpectedUtility(object):
         G=self.env['G']
         F=self.env['F']
         H=self.env['H']
-        p=self.extparameters['a']/((X[self.i]+np.sum(ext))**(1/0.5)+1)
+        p=self.extparameters['a']/(X[self.i]+np.sum(ext)+1)
         EU=(1-p)*(self.Utility(X)+reward)+p*(self.Utility(X)-penality)
         return EU
 
@@ -78,12 +77,3 @@ class Social_Welfare(object):
         for consumer in self.consumers:
             res+=consumer.ExpectedUtility(X,externality(X,H,consumer.i),reward,penality)
         return sign*res
-    
-    
-
-        
-        
-    
-        
-        
-        

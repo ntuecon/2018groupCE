@@ -1,6 +1,5 @@
 '''
 Created on Apr 16, 2018
-
 @author: Hendrik Rommeswinkel
 '''
 import numpy as np
@@ -65,9 +64,3 @@ class SocialPlanner(object):
         return minimize(self.objective,X0,args=(-1.0,penality,reward),method='SLSQP',constraints=[{'type':'eq','fun':lambda X:self.Technology_constraint(X,prod_help)},
                                                                                   {'type':'eq','fun':lambda X:self.Market_clearance(X)},
                                                                                   {'type':'ineq','fun':lambda X:X}])
-
-
-
-
-                                       
-
