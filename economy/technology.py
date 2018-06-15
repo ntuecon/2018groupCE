@@ -21,14 +21,14 @@ class Technology(object):
         self.parameters['ksis'] = parameters['ksis'] --> Put it in class (Good)
         """
         
-    def __call__(self,X,prod_help=0.0):
-        G=self.env['G']
-        F=self.env['F']
-        H=self.env['H']
-        n=H*(G+F)+self.i*F
-        if self.i==0:
-            Prod_i=np.dot(self.parameters['psis'],(X[n: n+F]+prod_help)**(self.env['ksis'][self.i]))/self.env['ksis'][self.i]
-        else:
-            Prod_i=np.dot(self.parameters['psis'],X[n: n+F]**(self.env['ksis'][self.i]))/self.env['ksis'][self.i]
+        self.index=index
+        self.env=env
+        
+    def __call__(self,X):
+        G=self.env['nog']
+        F=self.env['nof']
+        H=self.env['noc']
+        n=H+(G+F)*H+i*F
+        Prod_i=np.dot(self.parameters['psis']/(1-self.env['ksis']),np.power(X[n : n+F],1-self.env['ksis']))
         return Prod_i
 

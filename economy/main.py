@@ -1,63 +1,62 @@
 import numpy as np
-from utility import CESUtility, ExpectedUtility, Social_Welfare
-from objects import Good,Factor
-from economy import Economy
-from agents import Consumer,Producer,SocialPlanner
-from scipy.optimize import minimize
-a=[0.3,0.3,0.4,2.0]
-b=[0.4,0.3,0.3,2.0]
-c=[0.3,0.4,0.3,2.0]
-o=[1.0,1.0]
+from utility import CESUtility, ExpectedUtility
+from environment import Economy,Factor,Good,environment
+from agents import Consumer,Producer
 
-#The part is just for the introduction
-print "Welcome to the ECON world of CE group! \n" \
-      "This simulaton compute the general equilibrium of an economy in the presence of a public good (vaccination). \n" \
-      "After having set up the economy, you will have to take the good decision in order to prevent the population from being infected."
+'''The part is just for the introduction.'''
+print "Welcome to the ECON world of CE group!"
 raw_input()
 print "Please follow us to set up all the details."
 raw_input()
 
 '''I'm asking the user to determine the 3 important numbers of ECON world.
 These numbers determine the structure of ECON world.'''
-number_of_goods   = int(input("Please enter the number of goods (the first good will be vaccination):"))
+number_of_goods   = int(input("Please enter the number of goods (the first good will be a public good):"))
 number_of_factors = int(input("Please enter the number of factors:"))
-gamma = float(input("Please enter the gamma of your economy:"))
+gamma = int(input("Please enter the gamma of your economy:"))
 number_of_types = int(input("Please determine how many types of consumers(more than 1):"))
-number_of_consumers_by_type=[]
+number_of_consumers=np.zeros(number_of_types)
 for i in range(number_of_types):
-    number_of_consumers_by_type.append(int(input('Please determine how many consumers(more than 1) in type %s:' % (i))))
-total_number_of_consumers=int(sum(number_of_consumers_by_type))
+    number_of_consumers[i] = int(input('Please determine how many consumers(more than 1) in type %s:' % (i)))
 
-print "\n Now let's set the parameters for goods"
+"""Here we build our economy"""
+ECO=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers)
+
+
+print "Now let's set the parameters for goods"
 raw_input()
-Goods=[[]]*number_of_goods
-for g in range(number_of_goods):
+Goods=[[]]*ECO.nog
+for g in range(ECO.nog):
     if g==0:
         Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'public')
     else:
         Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'private')
 
-print "\n Now let's set the parameters for factors"
+print "Now let's set the parameters for factors"
 raw_input()
-Factors=[[]]*number_of_factors
-for f in range(number_of_factors):
-    Factors[f]=Factor(float(input('Please determine theta for factor %s(more than 1):' % (f))))
+Factors=[[]]*ECO.nof
+for f in range(ECO.nof):
+    Factors[f]=Factor(float(input('Please determine theta for good %s(more than 1):' % (f))))
 
-print "\n Now let's set the parameters for consumers"
+"""Here we build our environment"""
+env=environment(ECO,Goods,Factors)
+
+print "Now let's set the parameters for consumers"
 raw_input()
-alphas=[[]]*number_of_types
-betas=np.zeros(number_of_types)
-for ty in range(number_of_types):
+alphas=[[]]*env['noty']
+betas=np.zeros(env['noty'])
+for ty in range(env['noty']):
     para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
-    alphas[ty]=np.array(para[0:number_of_goods ])
-    betas[ty]=para[number_of_goods]
+    alphas[ty]=np.array(para[0:env['nog']])
+    betas[ty]=para[env['nog']]
 
-print "\n Now let's set the parameters for producers"
+print "Now let's set the parameters for producers"
 raw_input()
-psis=[[]]*number_of_goods 
-for g in range(number_of_goods):
+psis=[[]]*env['nog']
+for g in range(env['nog']):
     psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
 
+<<<<<<< HEAD
 
 
 ECO=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers_by_type,total_number_of_consumers,Goods,Factors,alphas,betas,psis)
@@ -253,23 +252,28 @@ uparameters_type1={'alphas':alphas_type1,'beta':beta_type1}
 alphas_type2=c[0:E.nog]
 beta_type2=c[E.nog]
 uparameters_type2={'alphas':alphas_type2,'beta':beta_type2}
+=======
+>>>>>>> parent of 6c3361b... Merge branch 'Final-Projet'
 
 extparameters={'a':0.5,'b':1.0,'c':1.0,'d':0.0,'e':0.0}
 
-Consumers=[Consumer(uparameters_type0,extparameters,0,Env),Consumer(uparameters_type1,extparameters,1,Env),Consumer(uparameters_type2,extparameters,2,Env)]
+"""Here we create our consumers"""
+Consumers=[[]]*sum(env['noc'])
+uparameters={}
+for ty in range(env['noty']):
+    uparameters['alphas']=alphas[ty]
+    uparameters['beta']=betas[ty]
+    if ty>0:
+        n=sum([env['noc'][i] for i in range(ty-1)])
+    else :
+        n=0
+    for h in range(n,n+env['noc']['ty']):
+        Consumers[h]=Consumer(uparameters,extparameters,h,env)
 
-techparameters={'psis':np.full(Env['nof'],1,dtype=float)}
-
-Producers=[]
-for g in range(Env['nog']):
-    Producers.append(Producer(techparameters,g,Env))
-
-SocialWelfare=Social_Welfare(Consumers,Producers,Env)
-
-SP=SocialPlanner(Consumers,Producers,Env)
-maxi=SP.maximization()
-print maxi
-print 'Probability of getting sick : ',0.5/(1+sum(maxi['x'][0:sum(Env['noc'])]))
-print 'Aggregate welfare : ',-maxi['fun']
-"""
+"""Here we create our producers"""
+Producers=[[]]*env['nog']
+for g in range(env['nog']):
+    techparameters={}
+    techparameters['psis']=psis[g]
+    Producers[g]=Producer(techparameters,g,env)
 
