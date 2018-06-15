@@ -58,8 +58,10 @@ psis=[[]]*number_of_goods
 for g in range(number_of_goods):
     psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
 
-
-
+"""
+ECONOMIES=[]
+Economies={0:"myeco",1:"myeco"}
+"""
 
 ECO=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers_by_type,total_number_of_consumers,Goods,Factors,alphas,betas,psis)
 dictio_ECO=ECO()
