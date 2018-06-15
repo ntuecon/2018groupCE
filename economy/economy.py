@@ -1,4 +1,5 @@
 import numpy as np
+import economy
 from utility import CESUtility, ExpectedUtility, Social_Welfare
 from objects import Good,Factor
 from agents import Consumer,Producer,SocialPlanner

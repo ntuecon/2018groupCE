@@ -6,6 +6,9 @@ Created on Apr 16, 2018
 import numpy as np
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of c52d92e... Merge branch 'Utility'
 from functions import FlexibleCrossProduct,externalities
 =======
 from functions import FlexibleCrossProduct,externality
@@ -20,38 +23,17 @@ class CESUtility(object):
         """X=   [v1,v2,...vH,
                 x11,x21,...,xG1,f11,f21,...fF1,
                 x12,x22,...,xG2,f12,f22,...fF2,
-=======
-
-class Utility(object):
-    
-    def __init__(self, parameters):
+                .
+                .
+                .
+                x1H,x2H,...,xGH,f1H,f2H,...fFH,
+                r11,r12,...,r1F,r21,r22,...,r2F,....,rG1,rG2,...,rGF,rV1,rV2,...,rVF]"""
         
-        """This constructs the utility class
-        X =    [v1,v2,...vH,
-                x11,x21,...,x1G,f11,f12,...f1F,
-                x21,x22,...,x2G,f21,f22,...f2F,
->>>>>>> Utility
-                .
-                .
-                .
-                xH1,xH2,...,xHG,fH1,fH2,...fHF,
-                r11,r12,...,r1F,r21,r22,...,r2F,....,rG1,rG2,...,rGF,
-                rV1,rV2,...,rVF]
-        
-<<<<<<< HEAD
         """
         self.uparameters['alphas'] = uparameters['alphas']
         self.uparameters['beta'] = uparameters['beta']
-=======
-        self.parameters['alpha'] = parameters['alpha']
-        self.parameters['gamma'] = parameters['gamma']
-        self.parameters['beta'] = parameters['exponent']
-        self.parameters['theta'] = paramaters['theta']
->>>>>>> Utility
         """
-        self.parameters = parameters
 
-<<<<<<< HEAD
     def __call__(self, X): 
         '''
         i=0,1,2,...,H
@@ -105,6 +87,7 @@ class Social_Welfare(object):
         for consumer in consumers:
             res+=consumer.Expected_Utility(X,X[0:H])
         return res
+<<<<<<< HEAD
 =======
 
     def __call__(self, X, i, env): 
@@ -164,3 +147,5 @@ class Expected_Utility(object):
         
         
 >>>>>>> Final-Projet
+=======
+>>>>>>> parent of c52d92e... Merge branch 'Utility'
