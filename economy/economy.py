@@ -46,7 +46,7 @@ class Economy:
             uparameters['alphas']=self.alphas[ty]
             uparameters['beta']=self.betas[ty]
             if ty==0:
-                for h in range(self.H):
+                for h in range(self.HTy[ty]):
                     self.Consumers.append(Consumer(uparameters,extparameters,h,self.env))
             else:
                 n=int(sum([self.HTy[j] for j in range(ty)]))
