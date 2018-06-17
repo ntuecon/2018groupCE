@@ -4,160 +4,78 @@ from objects import Good,Factor
 from economy import Economy
 from agents import Consumer,Producer,SocialPlanner
 from scipy.optimize import minimize
+from simulation_functions import set_up_economy, conclusion,action,give_penalty,give_reward,help_prod
 a=[0.3,0.3,0.4,2.0]
 b=[0.3,0.3,0.4,2.0]
 c=[0.3,0.3,0.4,2.0]
 o=[1.0,1.0]
 
-#The part is just for the introduction
-print "Welcome to the ECON world of CE group! \n" \
-      "This simulaton compute the general equilibrium of an economy in the presence of a public good (vaccination). \n" \
-      "After having set up the economy, you will have to take the good decision in order to prevent the population from being infected."
-raw_input()
-print "Please follow us to set up all the details."
-raw_input()
+act=0
+ECONOMIES=[]
+names=[]
+e=0 # number of economies created
+n=0 
+while act!='STOP':
+    #The part is just for the introduction
+    if n==0:print "Welcome to the ECON world of CE group! \n"
+    n=+1
+    raw_input()
+    act=input( "MENU OF THE SIMULATION : \n"\
+               "If you want to set up a new economy print 0. \n" \
+               "If you want to implement policies in one of your existing economies print 1. \n"\
+               "If you want to stop the simulation print 'STOP'.\n"\
+               "Your action : ")
 
-'''I'm asking the user to determine the 3 important numbers of ECON world.
-These numbers determine the structure of ECON world.'''
-number_of_goods   = int(input("Please enter the number of goods (the first good will be vaccination):"))
-number_of_factors = int(input("Please enter the number of factors:"))
-gamma = float(input("Please enter the gamma of your economy:"))
-number_of_types = int(input("Please determine how many types of consumers(more than 1):"))
-number_of_consumers_by_type=[]
-for i in range(number_of_types):
-    number_of_consumers_by_type.append(int(input('Please determine how many consumers(more than 1) in type %s:' % (i))))
-total_number_of_consumers=int(sum(number_of_consumers_by_type))
+    if act==0:
+        NEW_ECO=set_up_economy(e)
+        ECONOMIES.append(NEW_ECO)
+        
+        name=input("Please give a name to your new economy : ")
+        if type(name)!=str:
+            name=input("Make sure you use ' ' for the name. \n"\
+                       "Please enter again the name of your new economy : ")
+        names.append(name)
 
-print "\n Now let's set the parameters for goods"
-raw_input()
-Goods=[[]]*number_of_goods
-for g in range(number_of_goods):
-    if g==0:
-        Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'public')
-    else:
-        Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'private')
+        print "Well done, you have created the new economy %s. \n" %(names[e])
 
-print "\n Now let's set the parameters for factors"
-raw_input()
-Factors=[[]]*number_of_factors
-for f in range(number_of_factors):
-    Factors[f]=Factor(float(input('Please determine theta for factor %s(more than 1):' % (f))))
+        e=e+1
+        
+    elif act==1:
 
-print "\n Now let's set the parameters for consumers"
-raw_input()
-alphas=[[]]*number_of_types
-betas=np.zeros(number_of_types)
-for ty in range(number_of_types):
-    para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
-    alphas[ty]=np.array(para[0:number_of_goods ])
-    betas[ty]=para[number_of_goods]
+        if len(ECONOMIES)==0:
+            print "Please set up an economy before"
 
-print "\n Now let's set the parameters for producers"
-raw_input()
-psis=[[]]*number_of_goods 
-for g in range(number_of_goods):
-    psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
-
-
-
-
-ECO=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers_by_type,total_number_of_consumers,Goods,Factors,alphas,betas,psis)
-dictio_ECO=ECO()
-
-maxi=ECO.SocialPlanner.maximization(0.0,0.0,0.0)
-sick=0.5/(1+sum(maxi['x'][0:ECO.env['H']]))
-
-def Conclusion(sick,maxi):
-    print "RESULTS : \n" \
-          "Total welfare : %s. \n" \
-          "Consumption of vaccination : %s. \n" \
-          "Total consumption of vaccination : %s. \n" \
-          "Probability of getting sick : %s. \n" %(-maxi['fun'],maxi['x'][0:ECO.env['H']],sum(maxi['x'][0:ECO.env['H']]),sick)
-Conclusion(sick,maxi)
-raw_input()
-
-print   "\n As a social planner you can implement different measures to both reduce the probability of getting sick and increase the total welfare. \n" \
-        "Currently, the probability of getting sick is %s.\n" \
-        "How do you want to act?" %(sick)
-raw_input()
-
-def action():
-    act=input("If you want to implement penalities print P.\n"\
-              "If you want to create a reward print R. \n" \
-              "If you want to help production print H. \n" \
-              "If you want to make a mix of these policies print M. \n" \
-              "Your act : ")
-    return act
-
-def Give_penality(i):
-        if i==0:
-            print   "\n Let\'s see how implement penality policy can contribute to lower the probability of getting sick. \n" \
-                    "You can remove point of utility in the part corresponding to non-vaccination in the expected utility functions of consumers. \n" \
-                    "Choose a reasonable number according to the current total welfare value (%s)"%(maxi['fun'])
-            raw_input()
-            penality=float(input('Please try one level of penality :'))
-            pmaxi=ECO.SocialPlanner.maximization(penality,0.0,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
         else:
-            penality=float(input('Please try one level of penality :'))
-            pmaxi=ECO.SocialPlanner.maximization(penality,0.0,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
+            if len(ECONOMIES)==1:
+                if input ("You have created only one economy. Please print 0 if you do want work on %s" %(names[0]))==0:
+                    act=action(ECONOMIES[0])
+            if len(ECONOMIES)>1:
+                your_economies=names[0]
+                for i in range(1,len(ECONOMIES)):
+                    your_economies+='or %s' %(names(i))
+                ECO=input("You have created %s economies. Do you want to work on your_economies? \n"\
+                          "Please write the name of the economy you want to work on : ")
+                act=action(ECO)
+                
+    elif act=='STOP':
+        print "Thanks for partcipating to the simulation"
 
-        Conclusion(psick,pmaxi)
-
-def Give_reward(i):
-        if i==0:
-            print   "\n Let\'s see how implement reward policy can contribute to lower the probability of getting sick. \n" \
-                    "You can add point of utility in the part corresponding to vaccination in the expected utility functions of consumers. \n" \
-                    "Choose a reasonable number according to the current total welfare value (%s)" %(maxi['fun'])
-            raw_input()
-            reward=float(input('Please try one level of reward :'))
-            pmaxi=ECO.SocialPlanner.maximization(0.0,reward,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
-        else:
-            reward=float(input('Please try one level of reward :'))
-            pmaxi=ECO.SocialPlanner.maximization(0.0,reward,0.0)
-            psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
-
-        Conclusion(psick,pmaxi)
-
-def Help_prod(i):
-
-    if i==0:
-        print   "\n Let\'s see how helping production of vaccination can contribute to lower the probability of getting sick. \n" \
-                "You can add capital directly in the production function to help the production of vaccination. \n" \
-                "Choose a reasonable number according to the current consumption of vaccination %s (total = %s)." %(maxi['x'][0:int(sum(env['noc']))],sum(maxi['x'][0:int(sum(env['noc']))]))
-        raw_input()
-        help_prod=float(input('Please try one value to boost production :'))
-        pmaxi=ECO.SocialPlanner.maximization(0.0,0.0,help_prod)
-        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
     else:
-        help_prod=float(input('Please try one value to boost production :'))
-        pmaxi=ECO.SocialPlanner.maximization(0.0,0.0,help_prod)
-        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
+        act='MENU'
 
-    Conclusion(psick,pmaxi)
+"""
+    print "This simulaton compute the general equilibrium of an economy in the presence of a public good (vaccination). \n" \
+          "After having set up the economy, you will have to take the good decision in order to prevent the population from being infected."
+    raw_input()
 
-def Mix_policy(i):
-    
-    if i==0:
-        print   "\n Let\'s see how a mix of the different policies can contribute to lower the probability of getting sick. \n" 
-        raw_input()
-        mix_policy=np.array(input('Please try three values (list) of penality, reward and helping production :'),dtype=float)
-        if len(mix_policy)!=3:
-            print 'Make you have a vector of three values.\n'
-            mix_policy=np.array(input('Please try three values (list) of penality, reward and helping production :'),dtype=float)
-        pmaxi=ECO.SocialPlanner.maximization(mix_policy[0],mix_policy[1],mix_policy[2])
-        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
-    else:
-        mix_policy=np.array(input('Please try three values (list) of penality, reward and helping production :'),dtype=float)
-        if len(mix_policy)!=3:
-            print 'Make you have a vector of three values.\n'
-            mix_policy=np.array(input('Please try three values (list) of penality, reward and helping production :'),dtype=float)
-        pmaxi=ECO.SocialPlanner.maximization(mix_policy[0],mix_policy[1],mix_policy[2])
-        psick=0.5/(1+sum(pmaxi['x'][0:ECO.env['H']]))
+    print   "\n As a social planner you can implement different measures to both reduce the probability of getting sick and increase the total welfare. \n" \
+            "Currently, the probability of getting sick is %s.\n" \
+            "How do you want to act?" %(sick)
+raw_input()
 
-    Conclusion(psick,pmaxi)
+
+
+
     
     
 
@@ -167,7 +85,7 @@ while act!='STOP':
         i=0
         A=0
         while A==0:
-            Give_penality(i)
+            give_penality(i)
             A=input('\n Do you want to continue? (YES=0/NO=1) : ')
             i+=1
         if A!=0:
@@ -181,7 +99,7 @@ while act!='STOP':
         i=0
         A=0
         while A==0:
-            Give_reward(i)
+            give_reward(i)
             A=input('\n Do you want to continue? (YES=0/NO=1) : ')
             i+=1
         if A!=0:
@@ -195,7 +113,7 @@ while act!='STOP':
         i=0
         A=0
         while A==0:
-            Help_prod(i)
+            help_prod(i)
             A=input('\n Do you want to continue? (YES=0/NO=1) : ')
             i+=1
         if A!=0:
@@ -209,7 +127,7 @@ while act!='STOP':
         i=0
         A=0
         while A==0:
-            Mix_policy(i)
+            mix_policy(i)
             A=input('\n Do you want to continue? (YES=0/NO=1) : ')
             i+=1
         if A!=0:
@@ -219,6 +137,7 @@ while act!='STOP':
                 act=action()
             else:
                 act=A
+"""
         
         
     

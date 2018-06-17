@@ -51,13 +51,13 @@ class ExpectedUtility(object):
         self.extparameters['a'] = extparameters['a']
         
         """  
-    def __call__(self,X,ext,penality=0.0,reward=0.0):
+    def __call__(self,X,ext,penalty=0.0,reward=0.0):
         
         G=self.env['G']
         F=self.env['F']
         H=self.env['H']
         p=self.extparameters['a']/(X[self.i]+np.sum(ext)+1)
-        EU=(1-p)*self.Utility(X)-p*penality+(1-p)*reward
+        EU=(1-p)*self.Utility(X)-p*penalty+(1-p)*reward
         return EU
 
 
@@ -68,11 +68,11 @@ class Social_Welfare(object):
         self.producers=producers #list of producer
         self.env=env
 
-    def __call__(self,X,sign=1.0,penality=0.0,reward=0.0):
+    def __call__(self,X,sign=1.0,penalty=0.0,reward=0.0):
         G=self.env['G']
         F=self.env['F']
         H=self.env['H']
         res=0
         for consumer in self.consumers:
-            res+=consumer.ExpectedUtility(X,externality(X,H,consumer.i),reward,penality)
+            res+=consumer.ExpectedUtility(X,externality(X,H,consumer.i),penalty,reward)
         return sign*res

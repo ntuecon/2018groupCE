@@ -55,12 +55,12 @@ class SocialPlanner(object):
             res.append(sum([X[H+(G-1)*(i+1)+F*i+f] for i in range(H)])-sum([X[H*(G+F)+i*F+f] for i in range(G)]))
         return res
 
-    def maximization(self,penality,reward,prod_help):
+    def maximization(self,penalty,reward,prod_help):
         G=self.env['G']
         F=self.env['F']
         H=self.env['H']
         pbm_size=H*(G+F)+G*F
         X0=np.full(pbm_size,1,dtype=float)
-        return minimize(self.objective,X0,args=(-1.0,penality,reward),method='SLSQP',constraints=[{'type':'eq','fun':lambda X:self.Technology_constraint(X,prod_help)},
+        return minimize(self.objective,X0,args=(-1.0,penalty,reward),method='SLSQP',constraints=[{'type':'eq','fun':lambda X:self.Technology_constraint(X,prod_help)},
                                                                                   {'type':'eq','fun':lambda X:self.Market_clearance(X)},
                                                                                   {'type':'ineq','fun':lambda X:X}])
