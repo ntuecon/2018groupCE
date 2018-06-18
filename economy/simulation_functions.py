@@ -39,12 +39,12 @@ def set_up_economy(i):
     for g in range(number_of_goods):
         if g==0:
             Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'public')
-            while Goods[g]<0:
+            while Goods[g]<0.0:
                 print 'ksi for good should not be smaller than 0.'
                 Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'public')
         else:
             Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'private')
-            while Goods[g]<0:
+            while Goods[g]<0.0:
                 print 'ksi for good should not be smaller than 0.'
                 Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'private')
 
@@ -53,7 +53,7 @@ def set_up_economy(i):
     Factors=[[]]*number_of_factors
     for f in range(number_of_factors):
         Factors[f]=Factor(float(input('Please determine theta for factor %s(more than 1):' % (f))))
-        while Factors[f]<0:
+        while Factors[f]<0.0:
             print 'Theta should be greater than 0.'
             Factors[f]=Factor(float(input('Please determine theta for factor %s(more than 1):' % (f))))
 
@@ -68,7 +68,7 @@ def set_up_economy(i):
                                 "Please enter the alphas and beta for consumer type %s:" %(number_of_goods+1,ty)))
         alphas[ty]=np.array(para[0:number_of_goods ])
         betas[ty]=para[number_of_goods]
-        while not np.all(alphas[ty]>0) or np.sum(alphas[ty])!=1 or not betas[ty]>=0:
+        while not np.all(alphas[ty]>0.0) or np.sum(alphas[ty])!=1.0 or not betas[ty]>=0.0:
             print 'Make sure that alphas and beta are positive or that sum of alpha equals to 1.'
             para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
             alphas[ty]=np.array(para[0:number_of_goods ])
