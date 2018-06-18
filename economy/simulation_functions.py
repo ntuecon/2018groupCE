@@ -13,9 +13,21 @@ def set_up_economy(i):
     '''I'm asking the user to determine the 3 important numbers of ECON world.
     These numbers determine the structure of ECON world.'''
     number_of_goods   = int(input("Please enter the number of goods (the first good will be vaccination):"))
+    while number_of_goods<1:
+        print 'You should have at least ONE good in economy.'
+        number_of_goods   = int(input("Please enter the number of goods (the first good will be vaccination):"))
     number_of_factors = int(input("Please enter the number of factors:"))
+    while number_of_factors<1:
+        print 'You should have at least ONE factor in economy.'
+        number_of_goods   = int(input("Please enter the number of goods (the first good will be vaccination):"))
     gamma = float(input("Please enter the gamma of your economy:"))
+    while not gamma<1 or gamma==0:
+        print 'Please make sure gamma is smaller than 1 and not equal to 0.'
+        gamma = float(input("Please enter the gamma of your economy:"))
     number_of_types = int(input("Please determine how many types of consumers(more than 1):"))
+    while number_of_types<1:
+        print 'You should have at least ONE type of consumer in economy.'
+        number_of_types = int(input("Please determine how many types of consumers(more than 1):"))
     number_of_consumers_by_type=[]
     for i in range(number_of_types):
         number_of_consumers_by_type.append(int(input('Please determine how many consumers(more than 1) in type %s:' % (i))))
@@ -27,14 +39,23 @@ def set_up_economy(i):
     for g in range(number_of_goods):
         if g==0:
             Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'public')
+            while Goods[g]<0:
+                print 'ksi for good should not be smaller than 0.'
+                Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'public')
         else:
             Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'private')
+            while Goods[g]<0:
+                print 'ksi for good should not be smaller than 0.'
+                Goods[g]=Good(float(input('Please determine ksi for good %s(more than 1):' % (g))),'private')
 
     print "\n Now let's set the parameters for factors"
     raw_input()
     Factors=[[]]*number_of_factors
     for f in range(number_of_factors):
         Factors[f]=Factor(float(input('Please determine theta for factor %s(more than 1):' % (f))))
+        while Factors[f]<0:
+            print 'Theta should be greater than 0.'
+            Factors[f]=Factor(float(input('Please determine theta for factor %s(more than 1):' % (f))))
 
     print "\n Now let's set the parameters for consumers"
     raw_input()
@@ -44,12 +65,20 @@ def set_up_economy(i):
         para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
         alphas[ty]=np.array(para[0:number_of_goods ])
         betas[ty]=para[number_of_goods]
+        while not alphas[ty]>0 or np.sum(alphas[ty])!=1 or not betas[ty]>=0:
+            print 'Make sure that alphas and beta are positive or that sum of alpha equals to 1.'
+            para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
+            alphas[ty]=np.array(para[0:number_of_goods ])
+            betas[ty]=para[number_of_goods]
 
     print "\n Now let's set the parameters for producers"
     raw_input()
     psis=[[]]*number_of_goods 
     for g in range(number_of_goods):
         psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
+        while not psis[g]>0:
+            print 'Make sure psis be positive.'
+            psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
 
     ECO=Economy(gamma,number_of_goods,number_of_factors,number_of_types,number_of_consumers_by_type,total_number_of_consumers,Goods,Factors,alphas,betas,psis)
 

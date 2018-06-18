@@ -4,7 +4,7 @@ def infect_Pr(Ind_Vaccin,People_of_Type):
     1.alpha is the C-D parameter, it's the weight between individual and sum
     2.Base-line probability means that even no consumption at all, there is
     still a infecting probability.
-    3.'''
+    3.parameters=[Baseline_Pr,Effect_Vaccin,Weight,gamma]'''
     Ind_Vaccin=np.array(Ind_Vaccin,dtype=float)
     People_of_Type=np.array(People_of_Type,dtype=float)
     Base_Pr=0.8
