@@ -14,5 +14,10 @@ class Consumer:
         import numpy as np
         """What's below is the linear algebra version of CES utility equation."""
         """Objective function of consumer utility"""
+        '''GFvec=[g1_h,g2_h,...,gG_h,f1_h,f2_h,...,fF_h]'''
+        '''CESutility={sum[alphaG_h*(gG_h^gamma)]}^((1-sigma)/gamma)-
+        sum[theta*beta*fF_h^(1+theta)]/theta'''
         GFvec=np.array(GFvec[0:self.ng+self.nf],dtype=float)
-        return sign*(np.power(np.dot(self.alpha,np.power(GFvec[0:self.ng],self.gamma)),(1.0-self.sigma)/self.gamma)-np.dot(np.ones(len(self.theta)),self.beta*np.power(GFvec[self.ng:(self.ng+self.nf)],(self.theta+1.0))/(self.theta+1.0)))
+        return sign*(np.power(np.dot(self.alpha,np.power(GFvec[0:self.ng],self.gamma)),(1.0-self.sigma)/self.gamma)-
+                     np.dot(np.ones(len(self.theta)),self.beta*np.power(GFvec[self.ng:(self.ng+self.nf)],(self.theta+1.0))/(self.theta+1.0)))
+
