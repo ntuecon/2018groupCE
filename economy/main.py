@@ -27,7 +27,7 @@ while act!='STOP':
         ECONOMIES.append(NEW_ECO)
         
         name=input("Please give a name to your new economy (use string) : ")
-        if type(name)!=str:
+        while type(name)!=str:
             name=input("\n" \
                        "Make sure you use a string to define the name. \n"\
                        "Please enter again the name of your new economy : ")
@@ -54,7 +54,7 @@ while act!='STOP':
                     your_economies+=' or %s' %(names[i])
                 name_eco=input("You have created %s economies. Do you want to work on %s? \n"\
                           "Please write the name (use string) of the economy you want to work on : " %(len(ECONOMIES),your_economies))
-                if name_eco not in [name[i] for i in range(len(ECONOMIES))]:
+                while name_eco not in names:
                     name_eco=input("\n" \
                                    "Please enter a valid name. Make sure you use string. \n" \
                                    "Do you want to work on %s? \n" \

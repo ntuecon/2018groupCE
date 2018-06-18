@@ -63,9 +63,12 @@ def set_up_economy(i):
     betas=np.zeros(number_of_types)
     for ty in range(number_of_types):
         para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
+        while len(para)!=number_of_goods+1:
+            para=np.array(input("Make sure you enter %s parameters. \n" \
+                                "Please enter the alphas and beta for consumer type %s:" %(number_of_goods+1,ty)))
         alphas[ty]=np.array(para[0:number_of_goods ])
         betas[ty]=para[number_of_goods]
-        while not alphas[ty]>0 or np.sum(alphas[ty])!=1 or not betas[ty]>=0:
+        while not np.all(alphas[ty]>0) or np.sum(alphas[ty])!=1 or not betas[ty]>=0:
             print 'Make sure that alphas and beta are positive or that sum of alpha equals to 1.'
             para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
             alphas[ty]=np.array(para[0:number_of_goods ])
@@ -76,7 +79,7 @@ def set_up_economy(i):
     psis=[[]]*number_of_goods 
     for g in range(number_of_goods):
         psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
-        while not psis[g]>0:
+        while not np.all(psis[g]>0):
             print 'Make sure psis be positive.'
             psis[g]=np.array(input('Please enter the psis for the production of good %s:' %(g)))
 
