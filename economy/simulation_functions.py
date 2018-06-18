@@ -65,7 +65,7 @@ def set_up_economy(i):
         para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
         alphas[ty]=np.array(para[0:number_of_goods ])
         betas[ty]=para[number_of_goods]
-        while not alphas[ty]>0.0 or np.sum(alphas[ty])!=1.0 or not betas[ty]>=0.0:
+        while not np.all(alphas[ty]>0.0) or np.sum(alphas[ty])!=1.0 or not betas[ty]>=0.0:
             print 'Make sure that alphas and beta are positive or that sum of alpha equals to 1.'
             para=np.array(input('Please enter the alphas and beta for consumer type %s:' %(ty)))
             alphas[ty]=np.array(para[0:number_of_goods ])
