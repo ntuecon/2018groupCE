@@ -4,33 +4,28 @@ and factors, bundels and allocations are
 This file is directly taken from Prof. Hendrik Rommeswinkel.
 
 '''
-
-class Good(object):
+class Factor:
     '''
-    This is the goods class.
-    Goods are defined by their name and type.
+    This is the factor class. Factors are defined by their parameter theta.
     '''
-
-    def __init__(self, name, goodtype='private'):
-        '''
-        This constructs the goods class
-        '''
-        
-        self.name = name
-        self.goodtype = goodtype
-
-class Factor(object):
-    '''
-    This is the factor class. Factors are defined by their name and type.
-    '''
-
-    def __init__(self, name, factortype='private'):
+    def __init__(self,theta):
         '''
         This constructs the factors class
         '''
-        
-        self.name = name
-        self.factortype = factortype
+        self.theta=theta
+
+class Good:
+    '''
+    This is the goods class.
+    Goods are defined by their parameter ksi and type.
+    '''
+    def __init__(self,ksi,good_type):
+        '''
+        This constructs the goods class
+        '''
+        self.ksi=ksi
+        self.good_type=good_type
+
 
 class Bundle(object):
     '''

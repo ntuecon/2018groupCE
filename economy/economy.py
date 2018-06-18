@@ -69,13 +69,12 @@ class Economy(object):
         extparameters={'a':0.5}
         self.Consumers = []
         for ty in range(self.Ty):
-            uparameters = {}
-            uparameters['alphas'] = self.alphas[ty]
-            uparameters['beta'] = self.betas[ty]
-            if ty == 0:
-                for h in range(self.H):
-                    self.Consumers.append(Consumer(uparameters, extparameters, 
-                                                   h, self.env))
+            uparameters={}
+            uparameters['alphas']=self.alphas[ty]
+            uparameters['beta']=self.betas[ty]
+            if ty==0:
+                for h in range(self.HTy[ty]):
+                    self.Consumers.append(Consumer(uparameters,extparameters,h,self.env))
             else:
                 n = int(sum([self.HTy[j] for j in range(ty)]))
                 for h in range(n, n+self.HTy[ty]):
@@ -116,8 +115,5 @@ class Economy(object):
         dictio['betas'] = np.array(self.betas)
         dictio['psis'] = np.array(self.psis)
 
-        return dictio #Finally, we return the dictonary we just created
 
-    
-
-        
+        return dictio

@@ -1,23 +1,12 @@
-'''
-Created on Apr 16, 2018
-
-@author: Hendrik Rommeswinkel
-'''
 import numpy as np
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> parent of c52d92e... Merge branch 'Utility'
-=======
->>>>>>> parent of 6c3361b... Merge branch 'Final-Projet'
 from functions import FlexibleCrossProduct,externalities
+from scipy.optimize import minimize
 
 class CESUtility(object):
     def __init__(self, uparameters,i,env):
-        self.env=self.env
+        self.env=env
         self.uparameters=uparameters
+        self.i=i
         """X=   [v1,v2,...vH,
                 x11,x21,...,xG1,f11,f21,...fF1,
                 x12,x22,...,xG2,f12,f22,...fF2,
@@ -37,13 +26,12 @@ class CESUtility(object):
         i=0,1,2,...,H
         This makes the utility function a callable function
         '''
-        G=self.env['nog']
-        F=self.env['nof']
-        H=self.env['noc']
-        n=H+self.i*(G+F)
-        nog=len(self.uparameters['alphas'])
-        U_goods=((self.uparameters['alphas'][0]*X[i]**self.env['gamma']+np.dot(self.uparameters['alphas'][1:], X[n : n+G]**self.env['gamma'])))**(1/self.env['gamma'])
-        U_factors=self.uparameters['beta']*np.sum(np.power(X[n+G : n+G+F],(1+self.env['thetas']))/(1+self.env['thetas']))
+        G=self.env['G']
+        F=self.env['F']
+        H=self.env['H']
+        n=H+self.i*(G-1+F)
+        U_goods=((self.uparameters['alphas'][0]*X[self.i]**self.env['gamma']+np.dot(self.uparameters['alphas'][1:], X[n : n+G-1]**self.env['gamma'])))**(1/self.env['gamma'])
+        U_factors=self.uparameters['beta']*np.sum(np.power(X[n+G-1 : n+G-1+F],(1+self.env['thetas']))/(1+self.env['thetas']))
         U=U_goods-U_factors      
         return U
 
@@ -57,19 +45,15 @@ class ExpectedUtility(object):
 
         """
         self.extparameters['a'] = extparameters['a']
-        self.extparameters['b'] = extparameters['b']
-        self.extparameters['c'] = extparameters['c']
-        self.extparameters['f'] = extparameters['f']
-        self.extparameters['e']=extaparameters['e']
         
         """  
-    def _call__(self,X,ext):
-        """ext=[v1,v2,...,v(H)]"""
-        G=self.env['nog']
-        F=self.env['nof']
-        H=self.env['noc']
-        p=self.extparameters['a']/(self.extparameters['b']*(X[self.i]+externalities(X,self.env['noc'])[self.i])+1)
-        EU=p*(self.extparameters['c']*self.Utility(X)+self.extparameters['d'])+(1-p)*(self.Utility(X)-self.extparameters['e'])
+    def __call__(self,X,ext,penalty=0.0,reward=0.0):
+        
+        G=self.env['G']
+        F=self.env['F']
+        H=self.env['H']
+        p=self.extparameters['a']/(X[self.i]+np.sum(ext)+1)
+        EU=(1-p)*self.Utility(X)-p*penalty+(1-p)*reward
         return EU
 
 
@@ -80,76 +64,11 @@ class Social_Welfare(object):
         self.producers=producers #list of producer
         self.env=env
 
-    def __call__(X):
-        G=self.env['nog']
-        F=self.env['nof']
-        H=self.env['noc']
+    def __call__(self,X,sign=1.0,penalty=0.0,reward=0.0):
+        G=self.env['G']
+        F=self.env['F']
+        H=self.env['H']
         res=0
-        for consumer in consumers:
-            res+=consumer.Expected_Utility(X,X[0:H])
-        return res
-<<<<<<< HEAD
-=======
-
-    def __call__(self, X, i, env): 
-        
-        """This makes the utility function a callable function
-        i = 0, 1, 2, ..., H
-        """
-        G = env['n_goods']
-        F = env['n_factors']
-        H = env['n_consumers']
-        
-        # Here we need to check if the passed parameters c are of the correct 
-        # datatype
-        # We define a float that lets us access the relevant line in our matrix
-        # X depending on the index of the individual
-        n = H + i*(G+F) 
-        # Next we compute the utility derived from the goods consumed and the
-        # disutility from the factors supplied
-        # Functions taken from the lecture slides
-        u_goods = np.dot(self.parameters['alpha'], (X[n:(G+n)] ** self.parameters['gamma'])) ** (1/self.parameters['gamma'])
-        u_factors = self.parameters['beta'] * np.sum(np.power(X[(n+G): (n+G+F)], (1+self.parameters['theta'])) / (1+self.parameters['theta']))
-        
-        # Goods factor positively, factors factor negatively into the utility 
-        # function
-        u = u_goods - u_factors      
-        return u
-
-
-class Expected_Utility(object):
-    
-    def __init__(self, X, i, Utility, parameters):
-        self.X = X
-        self.i = i
-        self.Utility = Utility 
-        self.parameters = parameters
-
-        
-    def _call__(self, X, i, parameters, env):
-        H = env['n_consumers']
-        p = self.parameters['c'] / (self.parameters['a']*(self.X[self.i] + self.parameters['b']*np.sum[self.X[0:H]]) + 1)
-        u_ill = self.parameters['e'] * self.Utility(X, i, env) - self.parameters['f']
-        u_health = self.Utility(X, i, env)
-        EU = p * u_ill + (1 - p)*u_health
-        return EU
->>>>>>> Utility
-<<<<<<< HEAD
-=======
         for consumer in self.consumers:
-            res+=consumer.ExpectedUtility(X,externality(X,H,consumer.i),reward,penality)
+            res+=consumer.ExpectedUtility(X,externalities(X,H)[consumer.i],penalty,reward)
         return sign*res
-    
-    
-
-        
-        
-    
-        
-        
-        
->>>>>>> Final-Projet
-=======
->>>>>>> parent of c52d92e... Merge branch 'Utility'
-=======
->>>>>>> parent of 6c3361b... Merge branch 'Final-Projet'

@@ -16,7 +16,7 @@ def FlexibleCrossProduct(a, b):
     '''
     return np.append(a,np.zeros(0 if (len(b) - len(a))<0 else (len(b) - len(a))))*np.append(b,np.zeros(0 if (len(a) - len(b))<0 else (len(a) - len(b))))
 
-def externalities(X, noc):
+def externalities(X, H):
     '''
     This is the externalities function. Its input is the number of consumers
     and a array X
@@ -26,9 +26,9 @@ def externalities(X, noc):
     consumers to fille the externalites matrix, which the function returns in 
     the end.
     '''
-    L = [[]] * noc
-    EXT = [[]] * noc
-    for i in noc:
-        L[i] = [j for j in range(noc) if j != i]
+    L = [[]] * H
+    EXT = [[]] * H
+    for i in range(H):
+        L[i] = [j for j in range(H) if j != i]
         EXT[i] = np.sum([X[j] for j in L[i]])
     return EXT
