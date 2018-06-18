@@ -56,7 +56,8 @@ def set_up_economy(i):
     return ECO
 
 def conclusion(ECO,maxi):
-    print "GENERAL EQUILIBRIUM : \n" \
+    print "\n" \
+          "GENERAL EQUILIBRIUM : \n" \
           "Total welfare : %s. \n" \
           "Consumption of vaccination : %s. \n" \
           "Total consumption of vaccination : %s. \n" \
