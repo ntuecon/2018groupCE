@@ -22,6 +22,18 @@ individuals, goods and factors'''
 Gamma=0.5
 Sigma=0.0
 Inv_Par=np.append(Gamma,Sigma)
+Shape_of_SWF=1.0
+
+'''Here are parameters of vaccination.'''
+DoVac=False
+Base_Pr=0.8
+Effect_Vaccin=3.0
+Weight_of_Total_Consumption=3.0
+gamma=1.0
+Badstate_discount=0.5
+Absolute_Weakness=2.0
+Vac_Par=[DoVac,Base_Pr,Effect_Vaccin,Weight_of_Total_Consumption,gamma,
+         Badstate_discount,Absolute_Weakness]
 
 '''Then, according to the numbers of consumer type, I'm asking user to determine
 the parameter of each type, including how many people that type is.'''
@@ -57,10 +69,10 @@ Production_Par=np.array(Production_Par,dtype=float)
 
 """Import all the parameters to the welfare function.
 Please refer to the WelfareCES.py."""
-A=Soc.Social(Agent_Type,People_of_Type,Factor_sup,Production_Par,Inv_Par)
+A=Soc.Social(Agent_Type,People_of_Type,Factor_sup,Production_Par,Inv_Par,Vac_Par,Shape_of_SWF)
 
 '''Use the function defined in the WelfareCES.py.'''
-Result=A.Welfare_max()
+Result=A.Welfare_max().x
 
 '''Print the results appropriately'''
 for i in range(Type_of_consumers):

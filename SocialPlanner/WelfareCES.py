@@ -1,6 +1,6 @@
 #import ConsumerCES_class as cons
 class Social:
-    def __init__(self,Agent_Type,People_of_Type,Factor_sup,Production_Par,InvPar):
+    def __init__(self,Agent_Type,People_of_Type,Factor_sup,Production_Par,InvPar,Vac_Par,Shape_of_SWF):
         import ConsumerCES_class as Cons
         import ProducerCES as Pros
         import numpy as np
@@ -13,6 +13,9 @@ class Social:
         self.Production_Par=Production_Par
         self.InvPar=InvPar
         self.People=[[]]*self.nt
+        self.Vac_Par=np.array(Vac_Par[1:])
+        self.DoVac=Vac_Par[0]
+        self.V=Shape_of_SWF
         for i in range(self.nt):
             self.People[i]=Cons.Consumer(self.Agent_Type[:,0:self.ng][i],
                                          self.Agent_Type[:,self.ng:self.ng+1][i],
@@ -23,21 +26,11 @@ class Social:
         for i in range(self.ng):
             self.Firm[i]=Pros.Product(self.Production_Par[:,0:self.nf][i],
                                       self.Production_Par[:,self.nf:self.nf+1][i])
-#        self.People=np.apply_along_axis(Cons.Consumer,1,
-#                                        self.Agent_Type[:,0:self.ng],
-#                                        self.Agent_Type[:,self.ng:self.ng+1],
-#                                        np.outer(np.ones((self.nt,1),dtype=float),self.Factor_sup),
-#                                        np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[0]),
-#                                        np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[1]))
-#        self.Firm=np.apply_along_axis(Pros.Product,1,
-#                                      self.Production_Par[:,0:self.nf],
-#                                      self.Production_Par[:,self.nf:self.nf+1])
 
     def Welfare(self,SocialPlan,sign=1.0):
         '''The social welfare is simply the aggregation of individual utilitys.
         The individual utility is written in the ConsumerCES_class.py.'''
         import ConsumerCES_class as Cons
-        import ProducerCES as Pros
         import numpy as np
         import Vaccination as Vac
         SocialPlan=np.array(SocialPlan[0:(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf))],
@@ -53,9 +46,11 @@ class Social:
         g1_H,g2_H,...,gG_H,f1_H,f2_H,...,fF_H]
         '''
         ###Where to place the package of Vaccination
-        Ind_EU=Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,self.nt,self.ng,self.nf)
-        return sign*np.dot(self.People_of_Type,Ind_EU)
-        #return sign*np.dot(self.People_of_Type,utility)
+        if self.DoVac==True:
+            Ind_EU=Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,self.Vac_Par,self.nt,self.ng,self.nf)
+            return sign*np.power(np.dot(self.People_of_Type,np.power(Ind_EU,self.V)),1.0/self.V)
+        else:
+            return sign*np.power(np.dot(self.People_of_Type,np.power(utility,self.V)),1.0/self.V)
 
     def Technology(self,SocialPlan):
         '''This function guarantees the goods variables in SocialPlan are
@@ -92,6 +87,21 @@ class Social:
         ProSide=np.append(ProSide[:,0],np.sum(ProSide[:,1:],0))
         return ConSide-ProSide
 
+    def status_quo(self,SocialPlan):
+        import ConsumerCES_class as Cons
+        import numpy as np
+        import Vaccination as Vac
+        utility=[[]]*self.nt
+        for i in range(self.nt):
+            utility[i]=self.People[i].utility(SocialPlan[i*(self.ng+self.nf):(i+1)*(self.ng+self.nf)])
+        utility=np.array(utility)
+        if self.DoVac==True:
+            Ind_EU=np.array(Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,self.Vac_Par,self.nt,self.ng,self.nf))
+            return Ind_EU
+        else:
+            return utility
+        
+
     def Constraint(self):
         import numpy as np
         return ({'type' : 'eq',
@@ -111,5 +121,5 @@ class Social:
         3."MarketClears" &"Technology" set as the constrain of optimization problem.
         """
         res = minimize(self.Welfare, [50.0]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
-                       constraints=self.Constraint(), method='SLSQP', options={'disp': True})
-        return res.x
+                       constraints=self.Constraint(), method='SLSQP', options={'disp': True,'maxiter':3000})
+        return res
