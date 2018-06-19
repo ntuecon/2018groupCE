@@ -13,9 +13,9 @@ Shape_of_SWF=1.0
 
 '''Here are parameters of vaccination.'''
 DoVac=True
-#Base_Pr=0.2
+Base_Pr=0.8
 Effect_Vaccin=3.0
-Weight_of_Total_Consumption=3.0
+#Weight_of_Total_Consumption=3.0
 gamma=1.0
 Badstate_discount=0.5
 Absolute_Weakness=5.0
@@ -35,16 +35,16 @@ Factor_sup=np.array([3,2])
 Production_Par=np.array([[11,12,0.8],
                          [12,3,0.5]])
 
-BP=np.arange(0.,1.,0.05)
+WTC=np.arange(0.1,2.5,0.1)
 Welfare=[]
 UA=[]
 UB=[]
 VacA=[]
 VacB=[]
 VacT=[]
-for i in range(len(BP)):
+for i in range(len(WTC)):
     print str(i+1)
-    Base_Pr=BP[i]
+    Weight_of_Total_Consumption=WTC[i]
     Vac_Par=[DoVac,Base_Pr,Effect_Vaccin,Weight_of_Total_Consumption,gamma,
              Badstate_discount,Absolute_Weakness]
     A=Soc.Social(Agent_Type,People_of_Type,Factor_sup,Production_Par,Inv_Par,Vac_Par,Shape_of_SWF)
@@ -70,48 +70,49 @@ plt.title("Vaccination vs Base Probability")
 plt.legend()
 plt.show()'''
 
-'''import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+'''
 fig, ax1 = plt.subplots()
 color = 'tab:red'
-ax1.set_xlabel('Base Prob')
+ax1.set_xlabel('Weigh of Total Consumption')
 ax1.set_ylabel('Social Welfare', color=color)
-ax1.plot(BP, Welfare,label='SFW',color=color)
+ax1.plot(WTC, Welfare,label='SFW',color=color)
 ax1.tick_params(axis='y', labelcolor=color)
 ax1.legend()
 ax2 = ax1.twinx()
 color = 'tab:blue'
 ax2.set_ylabel('Utility', color=color)
-ax2.plot(BP, UA, 'o-',label='type 0',color=color)
-ax2.plot(BP, UB, '^-',label='type 1',color=color)
+ax2.plot(WTC, UA, 'o-',label='type 0',color=color)
+ax2.plot(WTC, UB, '^-',label='type 1',color='black')
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.legend()
 #ax1.title("Utility vs Base Probability")
 #fig.legend()
 fig.tight_layout()
-plt.savefig('Welfare-BasePro',format='png')
-plt.show()'''
-
-import matplotlib.pyplot as plt
+fig.savefig('Welfare-WT.png',format='png')
+plt.show()
+'''
 fig, ax1 = plt.subplots()
 color = 'tab:red'
-ax1.set_xlabel('Base Prob')
+ax1.set_xlabel('Weigh of Total Consumption')
 ax1.set_ylabel('Vaccin', color=color)
-ax1.plot(BP, VacT,label='Total',color=color)
+ax1.plot(WTC, VacT,label='Total',color=color)
 ax1.tick_params(axis='y', labelcolor=color)
 ax1.legend()
 ax2 = ax1.twinx()
 color = 'tab:blue'
 ax2.set_ylabel('Vaccin', color=color)
-ax2.plot(BP, VacA, 'o-',label='type 0',color=color)
-ax2.plot(BP, VacB, '^-',label='type 1',color=color)
+ax2.plot(WTC, VacA, 'o-',label='type 0',color=color)
+ax2.plot(WTC, VacB, '^-',label='type 1',color=color)
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.legend()
 #ax1.title("Utility vs Base Probability")
 #fig.legend()
 fig.tight_layout()
+plt.savefig('Vaccin-WT.png',format='png')
 plt.show()
-plt.savefig('Vaccin-BasePro',format='png')
-
+'''
+'''
 #for i in range(Type_of_consumers):
 #    print "The "+str(i+1)+" type of agent consumes goods: "+np.array2string(Result[i*(number_of_goods+number_of_factors):i*(number_of_goods+number_of_factors)+number_of_goods])
 #    print "The "+str(i+1)+" type of agent supplys factors: "+np.array2string(Result[i*(number_of_goods+number_of_factors)+number_of_goods:

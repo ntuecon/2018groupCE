@@ -121,5 +121,5 @@ class Social:
         3."MarketClears" &"Technology" set as the constrain of optimization problem.
         """
         res = minimize(self.Welfare, [50.0]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
-                       constraints=self.Constraint(), method='SLSQP', options={'disp': True,'maxiter':3000})
+                       constraints=self.Constraint(), method='SLSQP', options={'disp': False,'maxiter':1000})
         return res
