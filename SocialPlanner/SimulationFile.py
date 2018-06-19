@@ -70,8 +70,8 @@ plt.title("Vaccination vs Base Probability")
 plt.legend()
 plt.show()'''
 
-'''import matplotlib.pyplot as plt
-fig, ax1 = plt.subplots()
+import matplotlib.pyplot as plt
+'''fig, ax1 = plt.subplots()
 color = 'tab:red'
 ax1.set_xlabel('Base Prob')
 ax1.set_ylabel('Social Welfare', color=color)
@@ -81,15 +81,16 @@ ax1.legend()
 ax2 = ax1.twinx()
 color = 'tab:blue'
 ax2.set_ylabel('Utility', color=color)
-ax2.plot(BP, UA, 'o-',label='type 0',color=color)
-ax2.plot(BP, UB, '^-',label='type 1',color=color)
+ax2.plot(BP, UA, 'o:',label='type 0',color=color)
+ax2.plot(BP, UB, '^:',label='type 1',color='black')
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.legend()
 #ax1.title("Utility vs Base Probability")
 #fig.legend()
 fig.tight_layout()
-plt.savefig('Welfare-BasePro',format='png')
-plt.show()'''
+plt.savefig('Welfare-BasePro.png',format='png')
+plt.show()
+'''
 
 import matplotlib.pyplot as plt
 fig, ax1 = plt.subplots()
@@ -102,15 +103,15 @@ ax1.legend()
 ax2 = ax1.twinx()
 color = 'tab:blue'
 ax2.set_ylabel('Vaccin', color=color)
-ax2.plot(BP, VacA, 'o-',label='type 0',color=color)
-ax2.plot(BP, VacB, '^-',label='type 1',color=color)
+ax2.plot(BP, VacA, 'o:',label='type 0',color=color)
+ax2.plot(BP, VacB, '^:',label='type 1',color='black')
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.legend()
 #ax1.title("Utility vs Base Probability")
 #fig.legend()
 fig.tight_layout()
+plt.savefig('Vaccin-BasePro.png',format='png')
 plt.show()
-plt.savefig('Vaccin-BasePro',format='png')
 
 #for i in range(Type_of_consumers):
 #    print "The "+str(i+1)+" type of agent consumes goods: "+np.array2string(Result[i*(number_of_goods+number_of_factors):i*(number_of_goods+number_of_factors)+number_of_goods])
