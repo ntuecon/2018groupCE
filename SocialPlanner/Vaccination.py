@@ -13,7 +13,7 @@ def infect_Pr(Ind_Vaccin,People_of_Type,Vac_Par):
     gamma=Vac_Par[3]
     Total_Vaccin=np.dot(People_of_Type,Ind_Vaccin)
     return np.array(Base_Pr/(Effect_Vaccin*
-                             np.power(np.power(Ind_Vaccin,gamma)+Weight*np.power(Total_Vaccin,gamma),gamma)+
+                             np.power(np.power(Ind_Vaccin,gamma)+Weight*np.power(Total_Vaccin,gamma),1/gamma)+
                               1))
     #return Base_pr/(A*np.power(Ind_Vaccin,alpha)*np.power(Total_Vaccin,1-alpha)+1.0)
 

@@ -7,20 +7,20 @@ import numpy as np
 individuals, goods and factors'''
 '''Make sure that gamma is <1&!=0 and sigma is in (0,inf)&!=1'''
 Gamma=0.5
-Sigma=0.0
+Sigma=0.5
 Inv_Par=np.append(Gamma,Sigma)
 Shape_of_SWF=1.0
 
 '''Here are parameters of vaccination.'''
-DoVac=True
-#Base_Pr=0.2
+DoVac=False
+Base_Pr=0.2
 Effect_Vaccin=3.0
 Weight_of_Total_Consumption=3.0
 gamma=1.0
 Badstate_discount=0.5
-Absolute_Weakness=5.0
-#Vac_Par=[DoVac,Base_Pr,Effect_Vaccin,Weight_of_Total_Consumption,gamma,
-#         Badstate_discount,Absolute_Weakness]
+Absolute_Weakness=1.0
+Vac_Par=[DoVac,Base_Pr,Effect_Vaccin,Weight_of_Total_Consumption,gamma,
+         Badstate_discount,Absolute_Weakness]
 
 Type_of_consumers=2
 number_of_goods=2
@@ -28,14 +28,30 @@ number_of_factors=2
 ''' alphas & beta '''
 Agent_Type=np.array([[0.4,0.6,0.8],
                      [0.2,0.8,0.3]])
-People_of_Type=np.array([10,10])
+People_of_Type=np.array([100,100])
 '''thetas'''
 Factor_sup=np.array([3,2])
 '''psis&ksi'''
-Production_Par=np.array([[11,12,0.8],
+Production_Par=np.array([[8,12,0.8],
                          [12,3,0.5]])
 
-BP=np.arange(0.,1.,0.05)
+test=np.arange(0.0,150.0,10.0)
+Record=[[]]*len(test)
+for i in range(len(test)):
+    A=Soc.Social(Agent_Type,People_of_Type,Factor_sup,Production_Par,Inv_Par,Vac_Par,Shape_of_SWF,test[i])
+    Record[i]=A.Welfare_max().x
+Record=np.transpose(Record)
+print Record
+cord=np.transpose(np.array(Record))
+import matplotlib.pyplot as plt
+for i in range(len(test)):
+    plt.plot(test,cord[i])
+plt.xlabel('initial array')
+plt.title('Initial value robustness test')
+plt.legend()
+#plt.savefig('InitialTest.png',format='png')
+plt.show
+'''BP=np.arange(0.,1.,0.05)
 Welfare=[]
 UA=[]
 UB=[]
@@ -59,7 +75,7 @@ for i in range(len(BP)):
     Welfare=np.append(Welfare,A.Welfare(Result))
     UA=np.append(UA,A.People[0].utility(Consumer[0]))
     UB=np.append(UB,A.People[1].utility(Consumer[1]))
-
+'''
 '''import matplotlib.pyplot as plt
 plt.plot(BP, VacA, 'ro-',label='type 0')
 plt.plot(BP, VacB, 'bo-',label='type 1')
@@ -70,7 +86,7 @@ plt.title("Vaccination vs Base Probability")
 plt.legend()
 plt.show()'''
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 '''fig, ax1 = plt.subplots()
 color = 'tab:red'
 ax1.set_xlabel('Base Prob')
@@ -92,7 +108,7 @@ plt.savefig('Welfare-BasePro.png',format='png')
 plt.show()
 '''
 
-import matplotlib.pyplot as plt
+'''import matplotlib.pyplot as plt
 fig, ax1 = plt.subplots()
 color = 'tab:red'
 ax1.set_xlabel('Base Prob')
@@ -110,8 +126,8 @@ ax2.legend()
 #ax1.title("Utility vs Base Probability")
 #fig.legend()
 fig.tight_layout()
-plt.savefig('Vaccin-BasePro.png',format='png')
-plt.show()
+plt.savefig('Vaccin-BasePro_1.png',format='png')
+plt.show()'''
 
 #for i in range(Type_of_consumers):
 #    print "The "+str(i+1)+" type of agent consumes goods: "+np.array2string(Result[i*(number_of_goods+number_of_factors):i*(number_of_goods+number_of_factors)+number_of_goods])

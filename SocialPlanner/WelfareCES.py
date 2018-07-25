@@ -1,6 +1,6 @@
 #import ConsumerCES_class as cons
 class Social:
-    def __init__(self,Agent_Type,People_of_Type,Factor_sup,Production_Par,InvPar,Vac_Par,Shape_of_SWF):
+    def __init__(self,Agent_Type,People_of_Type,Factor_sup,Production_Par,InvPar,Vac_Par,Shape_of_SWF,init):
         import ConsumerCES_class as Cons
         import ProducerCES as Pros
         import numpy as np
@@ -12,16 +12,17 @@ class Social:
         self.nf=self.Factor_sup.shape[0]
         self.Production_Par=Production_Par
         self.InvPar=InvPar
-        self.People=[[]]*self.nt
         self.Vac_Par=np.array(Vac_Par[1:])
         self.DoVac=Vac_Par[0]
         self.V=Shape_of_SWF
+        self.init=init
+        self.People=[[]]*self.nt
         for i in range(self.nt):
             self.People[i]=Cons.Consumer(self.Agent_Type[:,0:self.ng][i],
                                          self.Agent_Type[:,self.ng:self.ng+1][i],
                                          np.outer(np.ones((self.nt,1),dtype=float),self.Factor_sup)[i],
-                                         np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[0])[i],
-                                         np.outer(np.ones((self.nt,1),dtype=float),self.InvPar[1])[i])
+                                         self.InvPar[0],
+                                         self.InvPar[1])
         self.Firm=[[]]*self.ng
         for i in range(self.ng):
             self.Firm[i]=Pros.Product(self.Production_Par[:,0:self.nf][i],
@@ -43,14 +44,19 @@ class Social:
         SocialPlan=[g1_1,g2_1,...,gG_1,f1_1,f2_1,...,fF_1;
         g1_2,g2_2,...,gG_2,f1_2,f2_2,...,fF_2;
         ... ...;
-        g1_H,g2_H,...,gG_H,f1_H,f2_H,...,fF_H]
+        g1_H,g2_H,...,gG_H,f1_H,f2_H,...,fF_H;
+        g1,f1_1,f2_1,...,fF_1;
+        ......;
+        gG,f1_G,f2_G,...fF_G;]
         '''
         ###Where to place the package of Vaccination
+        '''self.DoVac is True, if there is externality'''
         if self.DoVac==True:
             Ind_EU=Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,self.Vac_Par,self.nt,self.ng,self.nf)
             return sign*np.power(np.dot(self.People_of_Type,np.power(Ind_EU,self.V)),1.0/self.V)
         else:
             return sign*np.power(np.dot(self.People_of_Type,np.power(utility,self.V)),1.0/self.V)
+            #return sign*np.dot(self.People_of_Type,utility)
 
     def Technology(self,SocialPlan):
         '''This function guarantees the goods variables in SocialPlan are
@@ -60,12 +66,15 @@ class Social:
         import numpy as np
         NT=np.zeros((self.nt,self.nt),float)
         np.fill_diagonal(NT,self.People_of_Type)
+        '''Use production function to gG=Tech(f1_G,f2_G,...,fF_G)'''
         for i in range(self.ng):
             SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)]=self.Firm[i].Tech(SocialPlan[self.nt*(self.ng+self.nf)+i*(1+self.nf)+1:
                                                                                              self.nt*(self.ng+self.nf)+(i+1)*(1+self.nf)])
+        '''Take out the first column of ProSide, g1,g2,...,gG'''           
         ProSide=SocialPlan[self.nt*(self.ng+self.nf):]
         ProSide=np.reshape(ProSide,(self.ng,1+self.nf))
         TotalProduct=ProSide[:,0]
+        '''Take out the sum of goods consumptions'''
         ConSide=SocialPlan[0:self.nt*(self.ng+self.nf)]
         ConSide=np.reshape(ConSide,(self.nt,self.ng+self.nf))
         ConSide=np.sum(np.matmul(NT,ConSide),0)
@@ -96,7 +105,8 @@ class Social:
             utility[i]=self.People[i].utility(SocialPlan[i*(self.ng+self.nf):(i+1)*(self.ng+self.nf)])
         utility=np.array(utility)
         if self.DoVac==True:
-            Ind_EU=np.array(Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,self.Vac_Par,self.nt,self.ng,self.nf))
+            Ind_EU=np.array(Vac.Expected_Uti(utility,SocialPlan,self.People_of_Type,
+                                             self.Vac_Par,self.nt,self.ng,self.nf))
             return Ind_EU
         else:
             return utility
@@ -120,6 +130,6 @@ class Social:
         2.Objective function is Social Welfare function.
         3."MarketClears" &"Technology" set as the constrain of optimization problem.
         """
-        res = minimize(self.Welfare, [50.0]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
+        res = minimize(self.Welfare, [self.init]*(self.nt*(self.ng+self.nf)+self.ng*(1+self.nf)), args=(-1.0,),
                        constraints=self.Constraint(), method='SLSQP', options={'disp': False,'maxiter':1000})
         return res

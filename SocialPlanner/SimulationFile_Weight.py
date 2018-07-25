@@ -71,7 +71,7 @@ plt.legend()
 plt.show()'''
 
 import matplotlib.pyplot as plt
-'''
+
 fig, ax1 = plt.subplots()
 color = 'tab:red'
 ax1.set_xlabel('Weigh of Total Consumption')
@@ -82,8 +82,8 @@ ax1.legend()
 ax2 = ax1.twinx()
 color = 'tab:blue'
 ax2.set_ylabel('Utility', color=color)
-ax2.plot(WTC, UA, 'o-',label='type 0',color=color)
-ax2.plot(WTC, UB, '^-',label='type 1',color='black')
+ax2.plot(WTC, UA, 'o:',label='type 0',color=color)
+ax2.plot(WTC, UB, '^:',label='type 1',color='black')
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.legend()
 #ax1.title("Utility vs Base Probability")
@@ -102,8 +102,8 @@ ax1.legend()
 ax2 = ax1.twinx()
 color = 'tab:blue'
 ax2.set_ylabel('Vaccin', color=color)
-ax2.plot(WTC, VacA, 'o-',label='type 0',color=color)
-ax2.plot(WTC, VacB, '^-',label='type 1',color=color)
+ax2.plot(WTC, VacA, 'o:',label='type 0',color=color)
+ax2.plot(WTC, VacB, '^:',label='type 1',color='black')
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.legend()
 #ax1.title("Utility vs Base Probability")
@@ -112,7 +112,7 @@ fig.tight_layout()
 plt.savefig('Vaccin-WT.png',format='png')
 plt.show()
 '''
-'''
+
 #for i in range(Type_of_consumers):
 #    print "The "+str(i+1)+" type of agent consumes goods: "+np.array2string(Result[i*(number_of_goods+number_of_factors):i*(number_of_goods+number_of_factors)+number_of_goods])
 #    print "The "+str(i+1)+" type of agent supplys factors: "+np.array2string(Result[i*(number_of_goods+number_of_factors)+number_of_goods:
